@@ -25,6 +25,11 @@ import './assets/css/tailwind.css';
 
 import 'semantic-ui-css/semantic.css';
 import router from './Router'
+import { Inkline } from '@inkline/inkline/src';
+import * as components from '@inkline/inkline/src/components';
+import '@inkline/inkline/src/inkline.scss';
+
+Vue.use(Inkline, { components });
 
 
 const settings = {
