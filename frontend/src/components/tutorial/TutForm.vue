@@ -1,5 +1,65 @@
 <template>
-  <div>
+  <i-container>
+    <i-row>
+      <i-column xl="4" lg="6" md="6" sm="8" xs="12" class="_margin-x-auto">
+        <form @submit.prevent="checkForm" method="POST">
+          <i-form-group>
+            <i-form-label>Lecture</i-form-label>
+            <i-select v-model="lecture" placeholder="Choose a lecture">
+              <i-select-option
+                v-for="lec in lectures"
+                :key="lec.value"
+                :value="lec.value"
+                :label="lec.text"
+              />
+            </i-select>
+          </i-form-group>
+
+          <i-form-group>
+            <i-form-label>Title</i-form-label>
+            <i-input v-model="title" placeholder="An utmost brief description." />
+          </i-form-group>
+
+          <i-form-group>
+            <i-form-label>Frequency</i-form-label>
+            <i-select v-model="frequency" placeholder="Tutorial's scheduling">
+              <i-select-option
+                v-for="freq in frequencies"
+                :key="freq"
+                :value="freq"
+                :label="freq"
+              />
+            </i-select>
+          </i-form-group>
+
+          <i-form-group>
+            <i-form-label>Class size</i-form-label>
+            <i-input-number
+              v-model="classsize"
+              :min="1"
+              :max="15"
+              placeholder="1 to 15.."
+            />
+          </i-form-group>
+
+          <!-- flatpickr v4 for date&time -->
+
+          <i-form-group>
+            <i-form-label>Description</i-form-label>
+            <i-textarea
+              v-model="description"
+              placeholder="Tell your future students about your tutorial in detail. You can update this anytime you like."
+            />
+          </i-form-group>
+          <i-form-group>
+            <i-button type="submit">Button</i-button>
+          </i-form-group>
+        </form>
+      </i-column>
+    </i-row>
+  </i-container>
+
+  <!-- <div>
     <t-alert
       variant="danger"
       class="w-2/5 block self-center mx-auto mb-8"
@@ -88,11 +148,6 @@
                     placeholder="Tell your future students about your tutorial in detail. You can update this anytime you like."
                   />
                 </div>
-                <!--
-                <p class="mt-2 text-sm text-gray-500">
-                  Brief description for your profile. URLs are hyperlinked.
-                </p>
-                -->
               </div>
             </div>
           </div>
@@ -104,7 +159,7 @@
         </div>
       </form>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -129,10 +184,11 @@ export default {
       title: "",
       frequency: "",
       firstdate: "01.01.0001, 00:00:00.",
-      classsize: 0,
+      classsize: 1,
       description: "",
       lecture: "",
       lectures: [],
+      frequencies: ["WEEKLY", "MONTHLY", "IRREGULAR", "ONE-SHOT"],
     };
   },
   methods: {
@@ -174,7 +230,7 @@ export default {
         let tut = {
           class_size: this.classsize,
           //tutor: local storage bilmen ne,
-          tutor: localStorage.getItem('userID'),
+          tutor: localStorage.getItem("userID"),
           lecture: this.lecture,
           title: this.title,
           creation_date: this.now(),
@@ -194,6 +250,7 @@ export default {
           .catch((e) => {
             console.log(e);
           });
+        this.$router.push({name: 'tutorials'});
       }
     },
   },

@@ -42,7 +42,7 @@ export default new Router({
     },
     {
       path: '/tutorials/new',
-      name: 'new-task',
+      name: 'new-tutorial',
       component: NewTutorial
     },
     {

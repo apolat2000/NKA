@@ -1,4 +1,35 @@
 <template>
+<i-navbar>
+    <i-navbar-brand :to="{ name: 'home' }"><img
+              draggable="false"
+              width="36"
+              height="36"
+              src="../../assets/navlogo.png"
+            />
+    </i-navbar-brand>
+    <i-navbar-items>
+        <i-nav>
+            <i-nav-item :to="{ name: 'new-tutorial' }">New Tutorial</i-nav-item>
+            <i-nav-item :to="{ name: 'tutorials' }">Find Tutorials</i-nav-item>
+            <i-nav-item :to="{ name: 'social' }">Social</i-nav-item>
+            <i-nav-item :to="{ name: 'lectures' }">Lectures</i-nav-item>
+            <i-nav-item :to="{ name: 'earn-coins' }">Earn Coins</i-nav-item>
+        </i-nav>
+        <i-nav>
+            <i-dropdown placement="bottom-end">
+                <i-button variant="primary">Dropdown</i-button>
+                <i-dropdown-menu>
+                    <i-dropdown-item @click="$router.push(`/users/${getUserId()}`)" href="">Your profile</i-dropdown-item>
+                    <i-dropdown-item href="">Settings</i-dropdown-item>
+                    <i-dropdown-item href="" disabled>Something disabled here</i-dropdown-item>
+                    <i-dropdown-divider />
+                    <i-dropdown-item @click="logout">Log out</i-dropdown-item>
+                </i-dropdown-menu>
+            </i-dropdown>
+        </i-nav>
+    </i-navbar-items>
+</i-navbar>
+<!-- 
   <div>
     <nav
       class="fixed w-full bg-gradient-to-l from-blue-500 to-indigo-800 flex justify-between items-center h-20 text-sm"
@@ -102,7 +133,7 @@
       </div>
     </nav>
     <hr class="bg-white">
-  </div>
+  </div> -->
 </template>
 
 <script>
