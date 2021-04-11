@@ -1,30 +1,18 @@
 <template>
-  <div class="w-full grid grid-cols-5 row-span-1" id="tutorials">
-    <div class="hidden sm:block sm:col-span-1">
-      <tuts-side />
-    </div>
-    <div class="col-span-5 sm:col-span-4">
-      <h1 class="pt-12 pb-4 text-white text-center">All Tutorials</h1>
-      <tut-list />
-    </div>
+  <div id="tutorials">
+    <h1 class="_text-center">All Tutorials</h1>
+      <tut-list class="_margin-x-auto _width-75" />
   </div>
 </template>
 
 <script>
 import TutList from "../components/tutorial/TutList.vue";
-import TutsSide from "../components/tutorial/TutsSide.vue";
+//import TutsSide from "../components/tutorial/TutsSide.vue";
 import axios from "axios";
 
 export default {
   name: "TutorialsPage",
-  components: { TutList, TutsSide },
-  methods: {
-    logout() {
-      localStorage.clear();
-      this.$router.push("/login");
-      console.log("Logged out");
-    },
-  },
+  components: { TutList },
   async created() {
     try {
       const jwt_token = localStorage.getItem("jwt_token");

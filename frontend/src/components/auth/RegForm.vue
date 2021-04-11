@@ -1,5 +1,99 @@
 <template>
-  <div>
+  <i-container>
+    <i-row>
+      <i-column
+        xl="6"
+        lg="8"
+        md="10"
+        sm="12"
+        xs="12"
+        class="_margin-x-auto _margin-bottom-1"
+        ><i-alert variant="warning" :show="showAlert">
+          <p>{{ alertMessage }}</p>
+        </i-alert></i-column
+      >
+    </i-row>
+
+    <i-row>
+      <i-column
+        xl="4"
+        lg="6"
+        md="6"
+        sm="8"
+        xs="12"
+        class="_margin-x-auto _background-gray-20 _padding-1"
+      >
+        <form @submit.prevent="handleSubmit" method="POST">
+          <i-form-group>
+            <i-form-label>First name</i-form-label>
+            <i-input v-model="firstName" />
+          </i-form-group>
+
+          <i-form-group>
+            <i-form-label>Last name</i-form-label>
+            <i-input v-model="lastName" />
+          </i-form-group>
+
+          <i-form-group>
+            <i-form-label>Email</i-form-label>
+            <i-input v-model="email" type="email" />
+          </i-form-group>
+
+          <i-form-group>
+            <i-form-label>Username</i-form-label>
+            <i-input v-model="username" />
+          </i-form-group>
+
+          <i-form-group>
+            <i-form-label>Password</i-form-label>
+            <i-input v-model="password" type="password" />
+          </i-form-group>
+
+          <i-form-group>
+            <i-form-label>Your course of study</i-form-label>
+            <i-select v-model="slctCoS" placeholder="Choose an option">
+              <i-select-option
+                v-for="stud in studies"
+                :key="stud"
+                :value="stud"
+                :label="stud"
+              />
+            </i-select>
+          </i-form-group>
+
+          <i-form-group>
+            <i-form-label>Profile photo</i-form-label>
+            <input
+              type="file"
+              single
+              class="bg-gray-600 text-white text-sm font-semibold py-4 px-4 border border-black rounded-md shadow"
+              name="image"
+              id="image"
+              accept=".png, .jpeg, .jpg"
+              @change="processFile($event)"
+            />
+          </i-form-group>
+
+          <i-form-group>
+            <i-form-label>Your experted lectures</i-form-label>
+            <i-select v-model="slctCoS" placeholder="Choose an option">
+              <i-select-option
+                v-for="lec in lectures"
+                :key="lec.value"
+                :value="lec"
+                :label="lec.text"
+              />
+            </i-select>
+          </i-form-group>
+
+          <i-form-group>
+            <i-button variant="primary" type="submit">Register</i-button>
+          </i-form-group>
+        </form>
+      </i-column>
+    </i-row>
+  </i-container>
+  <!-- <div>
     <t-alert
       variant="danger"
       class="w-2/5 block self-center mx-auto mb-8"
@@ -111,7 +205,7 @@
         </div>
       </form>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -136,8 +230,14 @@ export default {
       password: "",
       slctLec: {},
       slctCoS: "",
-      options: [],
+      lectures: [],
       image: "",
+      studies: [
+        "Informatik B.Sc.",
+        "Maschinenbau B.Sc.",
+        "Elektrotechnik B.Sc.",
+        "Informatik M.Sc.",
+      ],
     };
   },
   created() {
@@ -147,7 +247,7 @@ export default {
     } else {
       axios.get("http://localhost:3000/lectures").then((res) => {
         res.data.forEach((x) =>
-          this.options.push({ value: x._id, text: x.title })
+          this.lectures.push({ value: x._id, text: x.title })
         );
         res.data.forEach((x) => console.log(x._id));
       });
@@ -201,13 +301,16 @@ export default {
           course_of_study: [this.slctCoS],
           expert_of_lectures: this.slctLec,
           img: this.image ? this.image : "",
-          bio: ""
+          bio: "",
         };
         var formData = new FormData();
         Object.keys(user).forEach((key) => formData.append(key, user[key]));
         console.log(formData);
         try {
-          let newUser = await axios.post("http://localhost:3000/users", formData);
+          let newUser = await axios.post(
+            "http://localhost:3000/users",
+            formData
+          );
           console.log("Account created");
           localStorage.setItem("jwt_token", newUser.data.jwt_token);
           localStorage.setItem("userID", newUser.data.userID);

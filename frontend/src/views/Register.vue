@@ -1,7 +1,11 @@
 <template>
-  <div id="register">
-    <h1 class="pt-12 pb-4 text-white text-center">Register</h1>
-    <reg-form />
+  <div
+    id="login"
+  >
+    <div>
+      <h1 class="_text-center">Register</h1>
+      <reg-form />
+    </div>
   </div>
 </template>
 

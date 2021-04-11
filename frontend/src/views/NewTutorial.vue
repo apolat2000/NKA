@@ -1,6 +1,6 @@
 <template>
   <div id="new-tutorial">
-    <h1 class="pt-12 pb-4 text-white text-center">Create New Tutorial</h1>
+    <h1 class="_text-center">Create New Tutorial</h1>
     <tut-form :tutorial="tutorial"/>
   </div>
 </template>

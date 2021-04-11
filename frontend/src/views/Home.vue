@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <img src="../assets/banner.png" draggable="false" class="w-1/2 my-32 mx-auto" />
+    <div class="_display-flex _flex-direction-column _align-items-center">
+        <img src="../assets/banner.png" draggable="false" class="_width-50" />
     </div>
 </template>
 

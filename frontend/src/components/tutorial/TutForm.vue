@@ -1,7 +1,27 @@
 <template>
   <i-container>
     <i-row>
-      <i-column xl="4" lg="6" md="6" sm="8" xs="12" class="_margin-x-auto">
+      <i-column
+        xl="6"
+        lg="8"
+        md="10"
+        sm="12"
+        xs="12"
+        class="_margin-x-auto _margin-bottom-1"
+        ><i-alert variant="warning" :show="showAlert">
+          <p>All fields are required! Please fill {{ oblig }}.</p>
+        </i-alert></i-column
+      >
+    </i-row>
+    <i-row>
+      <i-column
+        xl="4"
+        lg="6"
+        md="6"
+        sm="8"
+        xs="12"
+        class="_margin-x-auto _background-gray-20 _padding-1"
+      >
         <form @submit.prevent="checkForm" method="POST">
           <i-form-group>
             <i-form-label>Lecture</i-form-label>
@@ -17,7 +37,10 @@
 
           <i-form-group>
             <i-form-label>Title</i-form-label>
-            <i-input v-model="title" placeholder="An utmost brief description." />
+            <i-input
+              v-model="title"
+              placeholder="An utmost brief description."
+            />
           </i-form-group>
 
           <i-form-group>
@@ -42,8 +65,10 @@
             />
           </i-form-group>
 
-          <!-- flatpickr v4 for date&time -->
-
+          <i-form-group>
+            <i-form-label>Select date</i-form-label>: 
+            <flat-pickr v-model="firstdate" :config="{minDate: Date(), altInput: true, dateFormat: 'Z', altFormat: 'j.n.Y, H:i:S.', enableTime: true, time_24hr: true}"></flat-pickr>
+          </i-form-group>
           <i-form-group>
             <i-form-label>Description</i-form-label>
             <i-textarea
@@ -52,7 +77,10 @@
             />
           </i-form-group>
           <i-form-group>
-            <i-button type="submit">Button</i-button>
+            <i-button variant="primary" type="submit"
+              ><i-icon  icon="plus" class="_margin-right-1" size="sm" />Create
+              new tutorial</i-button
+            >
           </i-form-group>
         </form>
       </i-column>
@@ -163,9 +191,12 @@
 </template>
 
 <script>
+import flatPickr from 'vue-flatpickr-component';
+import 'flatpickr/dist/flatpickr.css';
 import axios from "axios";
 
 export default {
+  components: { flatPickr },
   props: {
     tutorial: {
       type: Object,
@@ -250,7 +281,7 @@ export default {
           .catch((e) => {
             console.log(e);
           });
-        this.$router.push({name: 'tutorials'});
+        this.$router.push({ name: "tutorials" });
       }
     },
   },

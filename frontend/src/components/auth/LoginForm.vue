@@ -1,4 +1,33 @@
 <template>
+  <i-container>
+    <i-row>
+      <i-column xl="6" lg="8" md="10" sm="12" xs="12" class="_margin-x-auto _margin-bottom-1"
+        ><i-alert variant="warning" :show="showAlert">
+          <p>{{ alertMessage }}</p>
+        </i-alert></i-column
+      >
+    </i-row>
+
+    <i-row>
+      <i-column xl="4" lg="6" md="6" sm="8" xs="12" class="_margin-x-auto _background-gray-20 _padding-1">
+        <form @submit.prevent="handleSubmit" method="POST">
+          <i-form-group>
+            <i-form-label>Email</i-form-label>
+            <i-input v-model="email" type="email" />
+          </i-form-group>
+
+          <i-form-group>
+            <i-form-label>Password</i-form-label>
+            <i-input v-model="password" type="password" />
+          </i-form-group>
+          <i-form-group>
+            <i-button variant="primary" type="submit">Button</i-button>
+          </i-form-group>
+        </form>
+      </i-column>
+    </i-row>
+  </i-container>
+  <!-- 
   <div class="flex flex-col justify-center">
     <t-alert
       variant="danger"
@@ -41,7 +70,7 @@
         </div>
       </form>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -55,39 +84,42 @@ export default {
       email: "",
       password: "",
       jwt_token: "",
-      alertMessage: ""
+      alertMessage: "",
     };
   },
   methods: {
     handleSubmit: async function login() {
-      if(this.email === "") {
-        this.alertMessage = "Please type in your email address that you once used to register.";
+      if (this.email === "") {
+        this.alertMessage =
+          "Please type in your email address that you once used to register.";
         this.showAlert = true;
       } else if (this.password === "") {
-        this.alertMessage = "Please type in your password that you once used to register.";
+        this.alertMessage =
+          "Please type in your password that you once used to register.";
         this.showAlert = true;
       } else
-      try {
-        let user = {
-          email: this.email,
-          password: this.password,
-        };
-        var res = await axios.post("http://localhost:3000/login", user);
-        //if successfull
-        if (res.status === 200) {
-          console.log("Logged in");
-          localStorage.setItem("jwt_token", res.data.jwt_token);
-          localStorage.setItem("userID", res.data.userID);
-          localStorage.setItem("firstName", res.data.first_name);
-          this.$router.push("/");
-          this.$root.$refs.Navbar.reloadNav();
+        try {
+          let user = {
+            email: this.email,
+            password: this.password,
+          };
+          var res = await axios.post("http://localhost:3000/login", user);
+          //if successfull
+          if (res.status === 200) {
+            console.log("Logged in");
+            localStorage.setItem("jwt_token", res.data.jwt_token);
+            localStorage.setItem("userID", res.data.userID);
+            localStorage.setItem("firstName", res.data.first_name);
+            this.$router.push("/");
+            this.$root.$refs.Navbar.reloadNav();
+          }
+        } catch (err) {
+          if (err.response.status) {
+            this.alertMessage =
+              "We don't seem to have the credentials you typed in as a registered user. Please double-check and try again.";
+            this.showAlert = true;
+          }
         }
-      } catch (err) {
-        if (err.response.status) {
-          this.alertMessage = "We don't seem to have the credentials you typed in as a registered user. Please double-check and try again.";
-          this.showAlert=true;
-        }
-      }
       return false;
     },
   },

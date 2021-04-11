@@ -1,5 +1,11 @@
 <template>
-  <div
+  <i-datatable :columns="columns" :rows="rows">
+    <template v-slot:expand="{ row, columns }">
+      <td :colspan="columns.length">here be desc {{ row.title }}</td>
+    </template>
+  </i-datatable>
+
+  <!-- <div
     class="select-none block self-center w-2/3 sm:w-4/5 md:w-3/4 lg:w-2/3 mx-auto mb-8"
   >
     <t-table
@@ -81,20 +87,30 @@
         </tr>
       </template>
     </t-table>
-  </div>
+  </div> -->
 </template>
 
 
 <script>
 import axios from "axios";
-import Tooltip from '../common/Tooltip.vue';
+import IsActive from "./IsActive";
+import LecHover from "./LecHover";
+import TutorPp from "./TutorPp";
+//import Tooltip from '../common/Tooltip.vue';
 
 export default {
   name: "TutorialsList",
-  components: { Tooltip },
+  //components: { Tooltip },
   data() {
     return {
-      headers: ["Lecture", "Title", "Scheduling", "Tutor", ""],
+      columns: [
+        { title: "Lecture", path: "lecture", component: LecHover },
+        { title: "Title", path: "title" },
+        { title: "Scheduling", path: "scheduling" },
+        { title: "Tutor", path: "tutor", component: TutorPp },
+        { title: "", path: "isActive", component: IsActive },
+      ],
+      //headers: ["Lecture", "Title", "Scheduling", "Tutor", ""],
       rows: [],
       tutorials: [],
       corpus: "",
@@ -112,17 +128,6 @@ export default {
       });
   },
   methods: {
-    abbr: function (text) {
-      console.log("heey")
-      let returnStr = "";
-      var split_names = text.trim().split(" ");
-      let abbrL = split_names;
-      console.log(abbrL);
-      abbrL.forEach((element) => {
-        returnStr = returnStr + element[0] + ". ";
-      });
-      return returnStr;
-    },
     getDesc: function (hovered, index) {
       if (hovered === "lecture") {
         axios
@@ -141,18 +146,13 @@ export default {
       //this.tutorials.forEach(element => console.log(element.lecture._id));
       for (var i = 0; i < this.tutorials.length; i++) {
         this.rows.push({
+          //lecture: this.tutorials[i].lecture.title,
           lecture: this.tutorials[i].lecture.title,
           title: this.tutorials[i].title,
           scheduling: this.tutorials[i].frequency,
-          tutor:
-            this.tutorials[i].tutor.first_name +
-            " " +
-            this.tutorials[i].tutor.last_name,
-          hoverLec: false,
+          tutor: this.tutorials[i].tutor,
           isActive: this.tutorials[i].is_active,
-          hoverTit: false,
           id: this.tutorials[i]._id,
-          lectureDesc: "",
         });
       }
     },

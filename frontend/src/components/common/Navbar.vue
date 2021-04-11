@@ -1,5 +1,5 @@
 <template>
-<i-navbar>
+<i-navbar class="_margin-bottom-1">
     <i-navbar-brand :to="{ name: 'home' }"><img
               draggable="false"
               width="36"
@@ -7,17 +7,17 @@
               src="../../assets/navlogo.png"
             />
     </i-navbar-brand>
-    <i-navbar-items>
-        <i-nav>
+    <i-navbar-items class="_justify-content-space-between">
+        <i-nav v-if="isLoggedIn()">
             <i-nav-item :to="{ name: 'new-tutorial' }">New Tutorial</i-nav-item>
             <i-nav-item :to="{ name: 'tutorials' }">Find Tutorials</i-nav-item>
             <i-nav-item :to="{ name: 'social' }">Social</i-nav-item>
             <i-nav-item :to="{ name: 'lectures' }">Lectures</i-nav-item>
             <i-nav-item :to="{ name: 'earn-coins' }">Earn Coins</i-nav-item>
         </i-nav>
-        <i-nav>
-            <i-dropdown placement="bottom-end">
-                <i-button variant="primary">Dropdown</i-button>
+        <i-nav class="_margin-left-auto">
+            <i-dropdown v-if="isLoggedIn()" placement="bottom-end">
+                <i-button variant="primary">{{this.getName()}}</i-button>
                 <i-dropdown-menu>
                     <i-dropdown-item @click="$router.push(`/users/${getUserId()}`)" href="">Your profile</i-dropdown-item>
                     <i-dropdown-item href="">Settings</i-dropdown-item>
@@ -26,6 +26,9 @@
                     <i-dropdown-item @click="logout">Log out</i-dropdown-item>
                 </i-dropdown-menu>
             </i-dropdown>
+            <i-nav-item v-if="!isLoggedIn()" :to="{ name: 'login' }">Log in</i-nav-item>
+            <i-nav-item v-if="!isLoggedIn()" :to="{ name: 'register' }">Register</i-nav-item>
+            
         </i-nav>
     </i-navbar-items>
 </i-navbar>

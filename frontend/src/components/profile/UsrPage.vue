@@ -1,4 +1,83 @@
 <template>
+  <i-card>
+    <template slot="header">
+      <i-container>
+        <i-row middle-xs>
+          <i-column xs="4">
+            <i-tooltip
+              v-if="imgURI && isEditable"
+              placement="bottom"
+              variant="dark"
+            >
+              <img
+                :src="imgURI"
+                alt="An error occured!"
+                class="_border _rounded-circle _width-100"
+                @click="tellViewClickedOnPp"
+              />
+              <template slot="body"
+                >Click to edit your profile picture.</template
+              >
+            </i-tooltip>
+
+            <img
+              v-if="imgURI && !isEditable"
+              :src="imgURI"
+              alt="An error occured!"
+              class="_border _rounded-circle _width-100"
+            />
+          </i-column>
+          <i-column
+            xs="8"
+            class="_display-flex _flex-direction-column _justify-content-center"
+          >
+            <h1 class="_text-center _margin-bottom-0">
+              {{ first_name }} {{ last_name }}
+            </h1>
+            <h4 class="_text-center _margin-top-0">@{{ username }}</h4>
+          </i-column>
+        </i-row>
+      </i-container>
+    </template>
+    <i-list-group :bordered="false">
+      <i-list-group-item v-if="isEditable">
+        <i-tooltip placement="bottom" variant="dark">
+          <p @click="tellViewClickedOnBioEdit()">{{ bio }}</p>
+          <template slot="body">Click to edit your bio.</template>
+        </i-tooltip>
+      </i-list-group-item>
+
+      <i-list-group-item v-else>
+        <p>{{ bio }}</p>
+      </i-list-group-item>
+
+      <i-list-group-item>
+        <p class="font-lato text-xl mb-1">
+          <b>Course of study:</b> {{ course_of_study[0] }}
+        </p>
+      </i-list-group-item>
+
+      <i-list-group-item>
+        <p class="font-lato text-xl mt-1">
+          <b>Expert in:</b> {{ expertToString(expert_of_lectures) }}
+        </p>
+      </i-list-group-item>
+    </i-list-group>
+
+    <template slot="footer"
+      ><i-collapsible>
+        <i-collapsible-item>
+          <template slot="title">Tutorials</template>
+          <ul>
+            <li class="mt-0" v-for="tutorial in tutor_in" :key="tutorial._id">
+              {{ tutorial.title }}
+            </li>
+          </ul>
+        </i-collapsible-item>
+      </i-collapsible></template
+    >
+  </i-card>
+  <!-- 
   <div class="flex justify-center text-white">
     <div
       class="grid grid-cols-3 divide-y grid-rows-4 w-11/12 sm:w-3/5 md:w-2/5 lg:w-1/3 shadow bg-gradient-to-b from-blue-700 to-indigo-800 sm:rounded-md"
@@ -89,13 +168,13 @@
         </ul>
       </div>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
-import Tooltip from "../common/Tooltip.vue";
+//import Tooltip from "../common/Tooltip.vue";
 export default {
-  components: { Tooltip },
+  //components: { Tooltip },
   name: "usr-page",
   props: {
     first_name: String,
@@ -123,7 +202,7 @@ export default {
     tellViewClickedOnPp: function () {
       this.$emit("clickedOnPp");
     },
-    tellViewDeletedPp: function() {
+    tellViewDeletedPp: function () {
       this.$emit("deletedPp");
     },
     expertToString: function (expert_of_lectures) {

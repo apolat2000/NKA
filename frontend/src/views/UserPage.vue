@@ -1,41 +1,70 @@
 <template>
   <div id="user-page">
-    <input
-      type="file"
-      ref="pp"
-      single
-      name="img"
-      accept=".png, .jpeg, .jpg"
-      class="hidden"
-      @change="ppAction($event)"
-    />
-    <usr-page
-      class="mt-24 mb-8"
-      :key="profileObject._id"
-      :imgURI="imgURI"
-      :first_name="profileObject.first_name"
-      :last_name="profileObject.last_name"
-      :course_of_study="profileObject.course_of_study"
-      :expert_of_lectures="profileObject.expert_of_lectures"
-      :bio="profileObject.bio"
-      :username="profileObject.username"
-      :student_in="profileObject.student_in"
-      :tutor_in="profileObject.tutor_in"
-      :isEditable="isEditable"
-      v-on:clickedOnBioEdit="bioEdit = true"
-      v-on:clickedOnPp="$refs.pp.click()"
-      v-on:deletedPp="deletePpAction"
-    />
-    <bio-edit v-on:closedBio="bioAction" :show="bioEdit" />
+    <i-container>
+      <i-row>
+        <i-column xl="6" lg="8" md="10" sm="12" xs="12" class="_margin-x-auto">
+          <input
+            type="file"
+            ref="pp"
+            single
+            name="img"
+            accept=".png, .jpeg, .jpg"
+            class="_display-none"
+            @change="ppAction($event)"
+          />
+          <usr-page
+            class="mt-24 mb-8"
+            :key="profileObject._id"
+            :imgURI="imgURI"
+            :first_name="profileObject.first_name"
+            :last_name="profileObject.last_name"
+            :course_of_study="profileObject.course_of_study"
+            :expert_of_lectures="profileObject.expert_of_lectures"
+            :bio="profileObject.bio"
+            :username="profileObject.username"
+            :student_in="profileObject.student_in"
+            :tutor_in="profileObject.tutor_in"
+            :isEditable="isEditable"
+            v-on:clickedOnBioEdit="bioEdit = true"
+            v-on:clickedOnPp="$refs.pp.click()"
+            v-on:deletedPp="deletePpAction"
+          />
+          <i-modal v-model="bioEdit">
+            <template slot="header">Edit your bio</template>
+            <i-form v-model="form" @submit="bioAction(true)">
+              <i-form-group>
+                <i-textarea
+                  v-model="bioText"
+                  :clearable="true"
+                  :schema="form.textarea"
+                  placeholder="Your bio here..."
+                />
+              </i-form-group>
+              <i-form-group class="_display-flex _justify-content-space-between">
+                <i-button type="submit" variant="success"
+                  >Save</i-button
+                >
+                <i-button variant="danger" @click="bioAction(false)"
+                  >Discard</i-button
+                >
+              </i-form-group>
+            </i-form>
+
+            
+          </i-modal>
+          <!-- <bio-edit v-on:closedBio="bioAction" :show="bioEdit" /> -->
+        </i-column>
+      </i-row>
+    </i-container>
   </div>
 </template>
 
 <script>
 import axios from "axios";
 import UsrPage from "../components/profile/UsrPage.vue";
-import BioEdit from "../components/profile/BioEdit.vue";
+//import BioEdit from "../components/profile/BioEdit.vue";
 export default {
-  components: { UsrPage, BioEdit },
+  components: { UsrPage },
   data() {
     return {
       profileObject: {
@@ -47,6 +76,12 @@ export default {
       imgURI: "nullum",
       bioEdit: false,
       isEditable: false,
+      bioText: "",
+      form: this.$inkline.form({
+        textarea: {
+          validators: [{ rule: "maxLength", value: 280 }],
+        },
+      }),
     };
   },
   created() {
@@ -114,14 +149,14 @@ export default {
     }
   },
   methods: {
-    bioAction: async function (isSuccess, bioText) {
+    bioAction: async function (isSuccess) {
       this.bioEdit = false;
       if (isSuccess) {
         let usr_id = localStorage.getItem("userID");
         console.log(usr_id);
         var result = await axios.put(
           `http://localhost:3000/user/${usr_id}`,
-          { bio: bioText },
+          { bio: this.bioText },
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
@@ -129,7 +164,7 @@ export default {
           }
         );
         if (result.status === 200) {
-          this.profileObject.bio = bioText;
+          this.profileObject.bio = this.bioText;
         } else {
           console.log(result);
         }
@@ -161,7 +196,7 @@ export default {
       let usr_id = localStorage.getItem("userID");
       var result = await axios.put(
         `http://localhost:3000/user/${usr_id}`,
-        { img_path: ''},
+        { img_path: "" },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
@@ -174,7 +209,7 @@ export default {
       } else {
         console.log(result);
       }
-    }
+    },
   },
 };
 </script>
