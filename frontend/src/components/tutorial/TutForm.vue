@@ -39,7 +39,7 @@
             <i-form-label>Title</i-form-label>
             <i-input
               v-model="title"
-              placeholder="An utmost brief description."
+              placeholder="A brief description."
             />
           </i-form-group>
 
@@ -66,7 +66,8 @@
           </i-form-group>
 
           <i-form-group>
-            <i-form-label>Select date</i-form-label>: 
+            <i-form-label>Select date</i-form-label>
+            <br>
             <flat-pickr v-model="firstdate" :config="{minDate: Date(), altInput: true, dateFormat: 'Z', altFormat: 'j.n.Y, H:i:S.', enableTime: true, time_24hr: true}"></flat-pickr>
           </i-form-group>
           <i-form-group>
@@ -76,7 +77,7 @@
               placeholder="Tell your future students about your tutorial in detail. You can update this anytime you like."
             />
           </i-form-group>
-          <i-form-group>
+          <i-form-group class="_display-flex _flex-direction-row-reverse">
             <i-button variant="primary" type="submit"
               ><i-icon  icon="plus" class="_margin-right-1" size="sm" />Create
               new tutorial</i-button
@@ -275,13 +276,13 @@ export default {
         axios
           .post(`http://localhost:3000/tutorials`, tut)
           .then((response) => {
-            console.log(response);
-            this.$router.push("/");
+            console.log(response.data);
+            this.$router.push({ name: "tutorial-page", params: { id: response.data, page: 'summary' } });
           })
           .catch((e) => {
             console.log(e);
           });
-        this.$router.push({ name: "tutorials" });
+        
       }
     },
   },
@@ -297,7 +298,6 @@ export default {
       .then((response) => {
         response.data.forEach((element) => {
           this.lectures.push({ value: element._id, text: element.title });
-          console.log(element._id);
         });
       })
       .catch((e) => {

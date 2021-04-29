@@ -7,6 +7,9 @@ global.schemas = require('./api/models/schemas');
 const routes = require('./api/routes/routes');
 const auth = require('./api/middlewares/authentication');
 
+const corsOptions = {
+  exposedHeaders: 'Client_Scope',
+};
 
 mongoose.Promise = global.Promise;
 mongoose.set('useFindAndModify', false);
@@ -20,7 +23,7 @@ console.log("Port: " + port);
 const app = express();
 
 dotenv.config();
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use('/profilepics', express.static('profilepics'))

@@ -23,7 +23,7 @@
         xs="12"
         class="_margin-x-auto _background-gray-20 _padding-1"
       >
-        <form @submit.prevent="handleSubmit" method="POST">
+        <form @submit.prevent="checkForm" method="POST">
           <i-form-group>
             <i-form-label>First name</i-form-label>
             <i-input v-model="firstName" />
@@ -75,12 +75,12 @@
           </i-form-group>
 
           <i-form-group>
-            <i-form-label>Your experted lectures</i-form-label>
-            <i-select v-model="slctCoS" placeholder="Choose an option">
+            <i-form-label>Your experted lectures {{slctLec}}</i-form-label>
+            <i-select v-model="slctLec" placeholder="Choose an option">
               <i-select-option
                 v-for="lec in lectures"
                 :key="lec.value"
-                :value="lec"
+                :value="lec.value"
                 :label="lec.text"
               />
             </i-select>
@@ -228,7 +228,7 @@ export default {
       username: "",
       email: "",
       password: "",
-      slctLec: {},
+      slctLec: "",
       slctCoS: "",
       lectures: [],
       image: "",
@@ -238,6 +238,7 @@ export default {
         "Elektrotechnik B.Sc.",
         "Informatik M.Sc.",
       ],
+      alertMessage: "",
     };
   },
   created() {
@@ -299,7 +300,7 @@ export default {
           email: this.email,
           password: this.password,
           course_of_study: [this.slctCoS],
-          expert_of_lectures: this.slctLec,
+          expert_of_lectures: [this.slctLec],
           img: this.image ? this.image : "",
           bio: "",
         };

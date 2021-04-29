@@ -1,5 +1,5 @@
 <template>
-  <div id="new-tutorial">
+  <div id="new-tutorial" class="_margin-top-1">
     <h1 class="_text-center">Create New Tutorial</h1>
     <tut-form :tutorial="tutorial"/>
   </div>

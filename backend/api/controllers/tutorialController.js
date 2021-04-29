@@ -5,7 +5,7 @@ const User = mongoose.model('Users');
 // Access database from here, CRUD (Create, Read, Update, Delete) operations
 
 exports.list_all_tutorials = (req, res) => {
-  Tutorial.find({}).populate('lecture', 'title').populate('tutor', 'first_name last_name img_path').exec((err, tutorials) => {
+  Tutorial.find({}).select('lecture title frequency tutor is_active').populate('lecture', 'title').populate('tutor', 'first_name last_name img_path').exec((err, tutorials) => {
     if (err) {
       res.send(err);
     }
@@ -28,13 +28,13 @@ exports.create_a_tutorial = (req, res) => {
     description: req.body.description,
     is_active: req.body.is_active
   });
-  
+
   newtutorial.save();
-  
+
   User.findByIdAndUpdate(
-    req.body.tutor, 
-    { $push: { tutor_in: newtutorial._id }}, 
-    function(error, success) {
+    req.body.tutor,
+    { $push: { tutor_in: newtutorial._id } },
+    function (error, success) {
       if (error) {
         console.log(error);
       } else {
@@ -42,15 +42,74 @@ exports.create_a_tutorial = (req, res) => {
       }
     }
   );
+
+  res.send(newtutorial._id);
 };
 
 exports.read_a_tutorial = (req, res) => {
-  Tutorial.findById(req.params.tutorialId).populate('lecture', 'title').populate('tutor', ['first_name' ,'last_name' ,'img_path']).exec((err, tutorial) => {
-    if (err) {
-      res.send(err);
-    }
-    else {
-      res.json(tutorial);
+
+  let wanted = req.headers['wanted'];
+  if (wanted === 'description') {
+    Tutorial.findById(req.params.tutorialId).select('description -_id').exec((err, description) => {
+      if (err) {
+        res.send(err);
+      }
+      else {
+        res.json(description);
+      }
+    });
+  }
+
+  let client_id = req.headers['whats_my_scope'];
+
+  Tutorial.findById(req.params.tutorialId).select('tutor students -_id').exec((err, tutorial) => {
+    let tutorId = tutorial.tutor.toString();
+    if (tutorId === client_id) {
+      if (wanted === "whole") {
+        console.log('right block');
+        Tutorial.findById(req.params.tutorialId).populate('lecture', 'title').populate('tutor', ['first_name', 'last_name', 'img_path', 'username']).exec((err, tutorial) => {
+          if (err) {
+            res.send(err);
+          }
+          else {
+            res.append('Client_Scope', 'tutor');
+            res.json(tutorial);
+          }
+        });
+      }
+      else {
+        res.send('Invalid wanted header.');
+      }
+    } else if (tutorial.students.includes(client_id)) {
+      if (wanted === 'whole') {
+        Tutorial.findById(req.params.tutorialId).populate('lecture', 'title').populate('tutor', ['first_name', 'last_name', 'img_path', 'username']).exec((err, tutorial) => {
+          if (err) {
+            res.send(err);
+          }
+          else {
+            res.append('Client_Scope', 'student');
+            res.json(tutorial);
+          }
+        });
+      }
+      else {
+        res.send('Invalid wanted header.');
+      }
+    } else {
+      if (wanted === 'whole') {
+        Tutorial.findById(req.params.tutorialId).populate('lecture', 'title').populate('tutor', ['first_name', 'last_name', 'img_path', 'username']).exec((err, tutorial) => {
+          if (err) {
+            res.send(err);
+          }
+          else {
+            res.append('Client_Scope', 'visitor');
+            res.json(tutorial);
+          }
+        });
+      }
+      else {
+        res.send('Invalid wanted header.');
+      }
     }
   });
 };

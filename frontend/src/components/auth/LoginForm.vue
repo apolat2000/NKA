@@ -20,8 +20,9 @@
             <i-form-label>Password</i-form-label>
             <i-input v-model="password" type="password" />
           </i-form-group>
-          <i-form-group>
-            <i-button variant="primary" type="submit">Button</i-button>
+          <i-form-group class="_display-flex _justify-content-space-between">
+            <i-button variant="primary" type="submit">Login</i-button>
+            <i-button variant="primary" type="submit">Forgot my password</i-button>
           </i-form-group>
         </form>
       </i-column>

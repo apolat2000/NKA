@@ -13,9 +13,9 @@
         >Summary</a
       >
       <a
-        @click="$router.push({ params: { page: 'dashboard' } })"
-        :class="this.page === 'dashboard' ? this.classChosen : classNot"
-        >Dashboard</a
+        @click="$router.push({ params: { page: 'announcements' } })"
+        :class="this.page === 'announcements' ? this.classChosen : classNot"
+        >Announcements</a
       >
       <a
         @click="$router.push({ params: { page: 'documents' } })"

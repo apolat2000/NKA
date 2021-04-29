@@ -1,6 +1,6 @@
 <template>
   <div>
-      <img v-if="row.tutor" width="32" class="border _rounded-circle" :src="ppStr(row.tutor.img_path)">
+      <img @click="$router.push('users/'+row.tutor._id)" v-if="row.tutor" width="32" class="border _rounded-circle" :src="ppStr(row.tutor.img_path)">
   </div>
 </template>
 

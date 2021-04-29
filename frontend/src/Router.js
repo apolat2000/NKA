@@ -11,6 +11,7 @@ import Register from './views/Register.vue';
 import EarnCoins from './views/EarnCoins.vue';
 import UserPage from './views/UserPage.vue';
 import Meeting from './components/meeting/Meeting.vue';
+import Social from './views/Social.vue';
 
 Vue.use(Router);
 
@@ -59,6 +60,11 @@ export default new Router({
       path: '/earn-coins',
       name: 'earn-coins',
       component: EarnCoins
+    },
+    {
+      path: '/social',
+      name: 'social',
+      component: Social
     },
     {
       path: '/tutorials/:id/:page',

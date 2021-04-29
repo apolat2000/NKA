@@ -15,12 +15,12 @@
               />
             </i-column>
 
-            <i-column xs="2">
+            <!-- <i-column xs="2">
               <img
                 class="_width-75"
                 src="https://3lhowb48prep40031529g5yj-wpengine.netdna-ssl.com/wp-content/uploads/2019/10/logo-vuejs-min.png"
               />
-            </i-column>
+            </i-column> -->
           </i-row>
         </i-container>
       </i-layout-footer>

@@ -1,219 +1,100 @@
 <template>
-  <div
-    class="text-white h-full mx-3 mt-8 sm:mx-8 grid grid-cols-3 gap-x-3 sm:gap-x-6 gap-y-16"
-  >
-    <div v-if="loaded" class="col-span-2">
-      <p class="my-3 text-xl md:text-2xl lg:text-3xl font-semibold">About</p>
-      <div
-        class="flex flex-col justify-center border bg-indigo-800 rounded-lg min-h-full"
-      >
-        <p class="m-3 text-xs md:text-sm lg:text-base break-words">
-          <b>Description:</b> {{ putDotAtEnd(description || "") }}
-        </p>
-        <p class="m-3 text-xs md:text-sm lg:text-base break-words">
-          <b>Lecture:</b> {{ lecture.title }}.
-        </p>
-        <p class="m-3 text-xs md:text-sm lg:text-base break-words">
-          <b>Class size:</b> {{ class_size }}.
-        </p>
-        <p class="m-3 text-xs md:text-sm lg:text-base break-words">
-          <b>Type:</b> {{ frequency }}.
-        </p>
-        <p class="m-3 text-xs md:text-sm lg:text-base break-words">
-          {{ is_active ? "Active" : "Inactive" }}.
-        </p>
-      </div>
-    </div>
-    <div v-else class="col-span-2">
-      <div class="bg-gray-200 w-32 h-6 puls my-3"></div>
-      <div
-        class="flex flex-col justify-center border bg-indigo-800 pl-2 rounded-lg min-h-full"
-      >
-        <div class="bg-gray-200 w-11/12 h-6 puls my-2"></div>
-        <div class="bg-gray-200 w-11/12 h-6 puls my-2"></div>
-        <div class="bg-gray-200 w-11/12 h-6 puls my-2"></div>
-        <div class="bg-gray-200 w-11/12 h-6 puls my-2"></div>
-      </div>
-    </div>
-    <div v-if="loaded" class="col-span-1">
-      <div v-if="isStudent || isTutor" class="w-full h-full">
-        <p class="my-3 text-xl md:text-2xl lg:text-3xl font-semibold">
-          Meeting
-        </p>
+  <i-container>
+    <i-row top-xs class="_padding-1">
+      <i-column xs="8">
+        <h4>About</h4>
         <div
-          class="flex flex-col justify-center place-items-center border bg-indigo-800 rounded-lg min-h-full"
+          class="_border _border-color-gray-70 _background-gray-20 _rounded _padding-1"
+        >
+          <p><b>Description:</b> {{ putDotAtEnd(description || "") }}</p>
+          <p><b>Lecture:</b> {{ lecture.title }}.</p>
+          <p><b>Class size:</b> {{ class_size }}.</p>
+          <p><b>Frequency:</b> {{ frequency }}.</p>
+        </div>
+      </i-column>
+      <i-column xs="4">
+        <h4>Meeting</h4>
+        <div
+          class="_border _border-color-gray-70 _background-gray-20 _rounded _display-flex _flex-direction-column _align-items-center _padding-1"
         >
           <p class="my-3 text-base md:text-lg lg:text-2xl font-semibold">
             {{ niceDate(first_date_nr) }}
           </p>
           <div class="w-2/3 sm:w-1/3 my-3">
-            <t-button variant="yellow">Go to meeting room!</t-button>
+            <i-button variant="secondary">Meet!</i-button>
           </div>
         </div>
-      </div>
-      <div v-if="!(isStudent || isTutor)" class="w-full h-full">
-        <p class="my-3 text-xl md:text-2xl lg:text-3xl font-semibold">Tutor</p>
+      </i-column>
+    </i-row>
+    <i-row top-xs class="_padding-1">
+      <i-column xs="12">
+        <h4>Announcements</h4>
         <div
-          class="flex flex-col justify-center place-items-center border bg-indigo-800 rounded-lg min-h-full"
+          class="_border _border-color-gray-70 _background-gray-20 _rounded _padding-1"
         >
-          <p class="my-2 text-base md:text-lg lg:text-2xl font-semibold">
-            {{ tutor.first_name }} {{ tutor.last_name }}
-          </p>
-          <div class="w-2/3 sm:w-1/3">
-            <router-link :to="`/users/${tutor._id}`">
-              <img
-                v-if="imgURI"
-                :src="imgURI"
-                class="w-full rounded-full shadow-xl"
-              />
-            </router-link>
-          </div>
+          <p>Here be announcements.</p>
         </div>
-      </div>
-    </div>
-    <div v-else class="col-span-1">
-      <div class="bg-gray-200 w-1/3 h-6 puls my-3"></div>
-      <div
-        class="flex flex-col justify-center place-items-center border bg-indigo-800 rounded-lg min-h-full"
-      >
-        <div class="bg-gray-200 w-2/3 h-6 puls my-3"></div>
-        <div class="bg-gray-200 rounded-full w-24 h-24 puls my-3"></div>
-      </div>
-    </div>
-    <div v-if="loaded" class="col-span-3">
-      <div v-if="isStudent || isTutor" class="w-full h-full">
-        <p class="mb-3 text-xl md:text-2xl lg:text-3xl font-semibold">
-          Dashboard
-        </p>
-        <div class="border bg-indigo-800 rounded-lg min-h-full">
-          <p class="m-3 text-xs md:text-sm lg:text-base break-words">
-            Here be discussions and announcements.
-          </p>
-        </div>
-      </div>
-    </div>
-    <div v-else class="col-span-3">
-      <div v-if="isStudent || isTutor" class="w-full h-full">
-        <div class="bg-gray-200 w-32 h-6 puls my-3"></div>
-        <div class="border pl-2 bg-indigo-800 rounded-lg min-h-full">
-          <div class="bg-gray-200 w-2/3 h-6 puls my-3"></div>
-        </div>
-      </div>
-    </div>
-    <div v-if="loaded" class="col-span-2">
-      <div v-if="isStudent || isTutor" class="w-full h-full">
-        <p class="my-3 text-xl md:text-2xl lg:text-3xl font-semibold">
-          Documents
-        </p>
+      </i-column>
+    </i-row>
+    <i-row top-xs class="_padding-1">
+      <i-column xs="8">
+        <h4>Documents</h4>
         <div
-          class="flex items-center justify-start border bg-indigo-800 rounded-lg min-h-full"
+          class="_position-static _border _border-color-gray-70 _background-gray-20 _rounded _padding-1 _display-flex _flex-direction-row _align-items-stretch"
         >
           <div
-            class="mx-1 md:mx-2 lg:ml-4 bg-gray-100 w-32 h-40 border border-black flex items-center justify-center"
-            @mouseover="newDocHover = true"
+            @mouseenter="newDocHover = true"
             @mouseleave="newDocHover = false"
-            @click="tellViewClickedOnNewDoc"
+            class="_width-25 _padding-1 _display-flex _flex-direction-column _justify-content-center _align-items-center"
           >
-            <input
-              type="file"
-              single
-              class="hidden bg-gray-600 text-white text-sm font-semibold py-4 px-4 border border-black rounded-md shadow"
-              name="doc"
-              id="doc"
-              accept=".pdf"
-              @change="processFile($event)"
-            />
-            <img src="../../assets/doc.png" class="w-24" />
+            <img src="../../assets/doc.png" class="image -thumbnail" />
             <div
-              v-if="isTutor || isStudent"
-              :class="newDocHover ? 'block' : 'hidden'"
-              class="w-16 h-16 bg-black opacity-70 rounded-full absolute flex items-center justify-center cursor-pointer"
+              style="width: 12%; height: 36%; opacity: 0.8; cursor: pointer;"
+              v-if="newDocHover"
+              @click="tellViewClickedOnNewDoc"
+              class="_rounded-circle _background-gray-90 _position-absolute _display-flex _flex-direction-column _justify-content-center _align-items-center"
             >
-              <p class="text-4xl font-semibold select-none">+</p>
+              <i-icon size="lg" icon="plus" />
             </div>
           </div>
-          <div v-for="doc in docs" :key="doc._id"
-          class="mx-1 lg:mr-2 lg:ml-4 bg-gray-100 w-32 h-40 border text-black border-black flex items-center justify-center"
-          > {{doc.title}}</div>
-          <div v-if="docs_sliced" class="mx-1 md:mr-3 w-32 h-40 text-white text-8xl text-center">...</div>
-        </div>
-      </div>
-      <div
-        v-else
-        class="flex justify-end flex-col md:flex-row col-span-3 mt-32 md:mt-16"
-      >
-        <div>
-          <p class="my-0 text-4xl md:text-6xl lg:text-8xl font-medium">
-            You are missing out on <b>a lot</b>.
-          </p>
-          <p class="my-0 text-2xl md:text-4xl lg:text-6xl font-medium">
-            Consider joining the fun.
-          </p>
-        </div>
-        <img src="../../assets/resources.png" class="w-full my-0" />
-      </div>
-    </div>
-    <div v-else class="col-span-2">
-      <div v-if="isStudent || isTutor" class="w-full h-full">
-        <div class="bg-gray-200 w-48 h-6 puls my-3"></div>
-        <div
-          class="flex items-center justify-start border bg-indigo-800 rounded-lg min-h-full"
-        >
           <div
-            class="puls mx-1 md:mr-3 md:ml-6 bg-gray-100 w-32 h-32 border border-black rounded-2xl flex items-center justify-center"
+            v-for="doc in docs"
+            :key="doc._id"
+            class="_width-25 _padding-1 _margin-1 _border _border-color-gray-40 _background-white _rounded _text-center"
           >
-            <img src="../../assets/doc.png" class="w-24" />
+            <p>{{ doc.title }}</p>
           </div>
-          <div
-            class="puls mx-1 md:mx-3 bg-gray-100 w-32 h-32 border border-black rounded-2xl flex items-center justify-center"
-          >
-            <img src="../../assets/doc.png" class="w-24" />
-          </div>
-          <div
-            class="puls mx-1 md:mx-3 bg-gray-100 w-32 h-32 border border-black rounded-2xl flex items-center justify-center"
-          >
-            <img src="../../assets/doc.png" class="w-24" />
-          </div>
-          <div
-            class="puls mx-1 md:mx-3 bg-gray-100 w-32 h-32 border border-black rounded-2xl flex items-center justify-center"
-          >
-            <img src="../../assets/doc.png" class="w-24" />
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <div v-if="loaded" class="col-span-1">
-      <div v-if="tutor && (isStudent || isTutor)" class="w-full h-full">
-        <p class="my-3 text-xl md:text-2xl lg:text-3xl font-semibold">Tutor</p>
+          <div
+            v-if="docs_sliced"
+            class="_width-25 _display-flex _flex-direction-column _justify-content-center"
+          >
+            <span class="_text-center _align-middle"><h1>...</h1></span>
+          </div>
+        </div>
+      </i-column>
+      <i-column xs="4">
+        <h4>Tutor</h4>
         <div
-          class="flex flex-col justify-center place-items-center border bg-indigo-800 rounded-lg min-h-full"
+          class="_border _border-color-gray-70 _background-gray-20 _rounded _display-flex _flex-direction-column _align-items-center _padding-1"
         >
-          <p class="my-2 text-base md:text-lg lg:text-2xl font-semibold">
-            {{ tutor.first_name }} {{ tutor.last_name }}
-          </p>
-          <div class="w-2/3 sm:w-1/3">
+          <h3 class="_margin-bottom-0">{{ tutor.first_name }} {{ tutor.last_name }}</h3>
+          <h4 class="_margin-top-0 _margin-bottom-2 _text-gray-70">@{{tutor.username}}</h4>
+          <div>
             <router-link :to="`/users/${tutor._id}`">
               <img
                 v-if="imgURI"
                 :src="imgURI"
-                class="w-full rounded-full shadow-xl"
+                width="100"
+                class="_rounded-circle"
               />
             </router-link>
           </div>
         </div>
-      </div>
-    </div>
-    <div v-else class="col-span-1">
-      <div class="bg-gray-200 w-1/3 h-6 puls my-3"></div>
-      <div
-        class="flex flex-col justify-center place-items-center border bg-indigo-800 rounded-lg min-h-full"
-      >
-        <div class="bg-gray-200 w-2/3 h-6 puls my-3"></div>
-        <div class="bg-gray-200 rounded-full w-24 h-24 puls my-3"></div>
-      </div>
-    </div>
-  </div>
+      </i-column>
+    </i-row>
+  </i-container>
+
 </template>
 
 <script>
@@ -242,7 +123,7 @@ export default {
     },
     loaded: Boolean,
     docs: Array,
-    docs_sliced: Boolean
+    docs_sliced: Boolean,
   },
   methods: {
     tellViewClickedOnNewDoc: function () {
