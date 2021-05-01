@@ -11,7 +11,10 @@ import Register from './views/Register.vue';
 import EarnCoins from './views/EarnCoins.vue';
 import UserPage from './views/UserPage.vue';
 import Meeting from './components/meeting/Meeting.vue';
-import Social from './views/Social.vue';
+import IsTutIsStud from './views/Entwurf/IsTutIsStud.vue';
+import NotTutIsStud from './views/Entwurf/NotTutIsStud.vue';
+import IsTutNotStud from './views/Entwurf/IsTutNotStud.vue';
+import NotTutNotStud from './views/Entwurf/NotTutNotStud.vue';
 
 Vue.use(Router);
 
@@ -62,9 +65,24 @@ export default new Router({
       component: EarnCoins
     },
     {
-      path: '/social',
-      name: 'social',
-      component: Social
+      path: '/socialIsTutorIsStud',
+      name: 'socialIsTutorIsStud',
+      component: IsTutIsStud
+    },
+    {
+      path: '/socialNotTutorIsStud',
+      name: 'socialNotTutorIsStud',
+      component: NotTutIsStud
+    },
+    {
+      path: '/socialNotTutorNotStud',
+      name: 'socialNotTutorNotStud',
+      component: NotTutNotStud
+    },
+    {
+      path: '/socialIsTutorNotStud',
+      name: 'socialIsTutorNotStud',
+      component: IsTutNotStud
     },
     {
       path: '/tutorials/:id/:page',

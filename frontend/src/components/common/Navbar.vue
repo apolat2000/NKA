@@ -12,7 +12,24 @@
       <i-nav v-if="isLoggedIn()">
         <i-nav-item :to="{ name: 'new-tutorial' }">New Tutorial</i-nav-item>
         <i-nav-item :to="{ name: 'tutorials' }">Find Tutorials</i-nav-item>
-        <i-nav-item :to="{ name: 'social' }">Social</i-nav-item>
+        <i-dropdown>
+          <i-button>Social</i-button>
+          <i-dropdown-menu>
+            <i-dropdown-item :to="{ name: 'socialIsTutorIsStud' }">
+              IsTutIsStud
+            </i-dropdown-item>
+            <i-dropdown-item :to="{ name: 'socialNotTutorIsStud' }">
+              NotTutIsStud
+            </i-dropdown-item>
+            <i-dropdown-item :to="{ name: 'socialIsTutorNotStud' }">
+              IsTutNotStud
+            </i-dropdown-item>
+            <i-dropdown-item :to="{ name: 'socialNotTutorNotStud' }">
+              NotTutNotStud
+            </i-dropdown-item>
+          </i-dropdown-menu>
+        </i-dropdown>
+
         <i-nav-item :to="{ name: 'lectures' }">Lectures</i-nav-item>
         <i-nav-item :to="{ name: 'earn-coins' }">Earn Coins</i-nav-item>
       </i-nav>
@@ -48,7 +65,7 @@
 export default {
   data() {
     return {
-      firstName: ""
+      firstName: "",
     };
   },
   methods: {
