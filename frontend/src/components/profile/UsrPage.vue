@@ -35,7 +35,8 @@
             <h1 class="_text-center _margin-bottom-0">
               {{ first_name }} {{ last_name }}
             </h1>
-            <h4 class="_text-center _margin-top-0">@{{ username }}</h4>
+            <h4 class="_text-center _margin-y-0">@{{ username }}</h4>
+            <h6 style="margin-top: 5px;" class="_text-center">{{ course_of_study[0] }}</h6>
           </i-column>
         </i-row>
       </i-container>
