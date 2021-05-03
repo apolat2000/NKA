@@ -1,9 +1,9 @@
 <template>
   <div
-    class="bg-gray-300 rounded-lg p-1 md:p-3 flex flex-col divide-y justify-start shadow-lg mb-4"
+    class="_border _padding-1 _display-flex _flex-direction-column _justify-items-start"
     v-if="comment.userId"
   >
-    <div class="flex flex-row justify-start items-center">
+    <div class="_display-flex _justify-items-start _align-items-center">
       <img
         alt="avatar"
         width="48"
@@ -12,30 +12,30 @@
         class="rounded-full w-10 h-10 shadow-lg cursor-pointer"
         :src="getImage()"
       />
-      <div class="flex flex-row justify-between w-full">
-        <div class="flex flex-col justify-center justify-items-start ml-2">
+      <div class="_display-flex flex-row _justify-content-space-between _width-100">
+        <div class="_display-flex _flex-direction-column _justify-items-start _margin-left-2">
           <p
             @click="$router.push(`/users/${comment.userId._id}`)"
-            class="mb-0 cursor-pointer text-purple-800 font-semibold"
+            class="_margin-bottom-0 _text-purple _font-weight-semibold"
           >
             @{{ comment.userId.username }}
           </p>
-          <p class="mt-0 text-gray-600">
+          <p class="_margin-top-0 _text-gray">
             {{ niceDate(comment.creation_date) }}
           </p>
         </div>
-        <p class="text-gray-600">Was asked<br />{{ getScope() }}.</p>
+        <p class="_text-gray">Was asked<br>{{ getScope() }}.</p>
       </div>
     </div>
-    <div class="my-2">
-      <p class="text-black text-lg w-full text-left mb-2">
+    <div class="_margin-y-1">
+      <h5 class="_margin-bottom-1 _text-black _width-100">
         {{ comment.value }}
-      </p>
+      </h5>
 
       <div v-if="isCommenter()">
-        <button title="Delete Comment" @click="deleteComment()">
-          <i class="trash icon" />
-        </button>
+        <i-button circle outline title="Delete Comment" @click="deleteComment()">
+          <i class="trash icon _margin-0" />
+        </i-button>
       </div>
     </div>
   </div>

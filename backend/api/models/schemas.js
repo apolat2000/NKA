@@ -2,17 +2,21 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
+// membership (students and tutors) to tutorials are SAVED IN tutorialsSchema !!!!
+
 
 const tutorialsSchema = new Schema(
   {
     class_size: { type: Number, min: 1, max: 15 },
+
     tutor: { type: Schema.Types.ObjectId, ref: "Users" }, //foreign key
-    lecture: { type: Schema.Types.ObjectId, ref: "Lectures" }, //foreign key
-    title: String,
-    creation_date: { type: Date, default: Date.now },
     students: [
       { type: Schema.Types.ObjectId, ref: "Users" }, //foreign keys -- redundant because tutorial IDs are saved in user.student_in
     ],
+    
+    lecture: { type: Schema.Types.ObjectId, ref: "Lectures" }, //foreign key
+    title: String,
+    creation_date: { type: Date, default: Date.now },
     first_date: Date,
     frequency: {
       type: String,
@@ -54,12 +58,12 @@ const usersSchema = new Schema({
     ],
   credits: Number,
   creation_date: { type: Date, default: Date.now },
-  tutor_in: [
-    { type: Schema.Types.ObjectId, ref: 'Tutorials' } //foreign keys -- redundant because tutorID is saved in tutorial.tutor
-  ],
-  student_in: [
-    { type: Schema.Types.ObjectId, ref: 'Tutorials' } //foreign keys
-  ],
+  // tutor_in: [
+  //   { type: Schema.Types.ObjectId, ref: 'Tutorials' } //foreign keys -- redundant because tutorID is saved in tutorial.tutor
+  // ],
+  // student_in: [
+  //   { type: Schema.Types.ObjectId, ref: 'Tutorials' } //foreign keys
+  // ],
   expert_of_lectures: [{ type: Schema.Types.ObjectId, ref: 'Lectures' }],
   img_path: { type: String, default: '' },
 },

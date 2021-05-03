@@ -2,24 +2,38 @@
   <i-layout>
     <i-layout-header class="_padding-0">
       <i-navbar
+      fluid
         :collapse="false"
         class="_background-gray-30"
         v-if="loaded && (isStudent || isTutor)"
       >
-        <i-navbar-brand
-          ><i-hamburger-menu
-            class="_margin-right-1"
+        <i-navbar-brand class="_margin-left-1">
+          <i-hamburger-menu
+            
             :active="showSide"
             @click="showSide = !showSide"
-          ></i-hamburger-menu>
-          <h3 class="_margin-right-1 _text-uppercase">{{ tutorial.title }}</h3>
+          >
+          </i-hamburger-menu>
+        </i-navbar-brand>
+        <i-navbar-items>
+          <div class="_display-flex _flex-direction-column _margin-right-1">
+          <h3 class="_margin-y-0 _text-uppercase">{{ tutorial.title }}</h3>
+          <h6 class="_margin-y-0">{{tutorial.lecture.title}}</h6>
+          </div>
           <i-badge
+            class="_margin-right-1"
             :variant="tutorial.is_active ? 'success' : 'danger'"
             v-if="loaded"
           >
             {{ tutorial.is_active ? "Active" : "Inactive" }}
           </i-badge>
-        </i-navbar-brand>
+          <i-badge class="_margin-right-auto" variant="info" v-if="loaded">
+            {{ tutorial.frequency }}
+          </i-badge>
+        </i-navbar-items>
+        <i-navbar-items class="_justify-content-end _margin-right-1">
+          <p>{{tutorial.students.length}}/{{ tutorial.class_size }} <span><i class="users icon"></i></span></p>
+        </i-navbar-items>
       </i-navbar>
     </i-layout-header>
     <i-layout vertical>
@@ -37,6 +51,7 @@
             @click="$router.push({ params: { page: 'summary' } })"
             :class="$route.params.page === 'summary' ? classChosen : classNot"
             style="cursor: pointer"
+            class="_margin-bottom-2 _margin-top-0"
           >
             Summary
           </h3>
@@ -46,6 +61,7 @@
               $route.params.page === 'announcements' ? classChosen : classNot
             "
             style="cursor: pointer"
+            class="_margin-bottom-1 _margin-top-0"
           >
             Announcements
           </h3>
@@ -53,6 +69,7 @@
             @click="$router.push({ params: { page: 'documents' } })"
             :class="$route.params.page === 'documents' ? classChosen : classNot"
             style="cursor: pointer"
+            class="_margin-bottom-1 _margin-top-0"
           >
             Documents
           </h3>
@@ -60,6 +77,7 @@
             @click="$router.push({ params: { page: 'feed' } })"
             :class="$route.params.page === 'feed' ? classChosen : classNot"
             style="cursor: pointer"
+            class="_margin-bottom-1 _margin-top-0"
           >
             Feed
           </h3>
@@ -139,8 +157,8 @@ export default {
       doc: "",
       docs: [],
       showSide: false,
-      classNot: "_margin-bottom-1 _margin-top-0",
-      classChosen: "_margin-bottom-1 _margin-top-0 _text-primary",
+      classNot: "",
+      classChosen: "_text-primary",
     };
   },
   methods: {
@@ -217,8 +235,6 @@ export default {
           );
 
           let clientScope = resTut.headers.client_scope;
-
-          console.log(clientScope);
 
           if (clientScope === "visitor") {
             this.$router.push({ params: { page: "join" } });

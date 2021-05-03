@@ -1,18 +1,15 @@
 <template>
-  <i-container>
+  <i-container fluid>
     <i-row top-xs class="_padding-1">
-      <i-column xs="8">
-        <h4>About</h4>
+      <i-column xs="12" sm="8" class="_margin-bottom-1">
+        <h4>Announcements</h4>
         <div
           class="_border _border-color-gray-70 _background-gray-20 _rounded _padding-1"
         >
-          <p><b>Description:</b> {{ putDotAtEnd(description || "") }}</p>
-          <p><b>Lecture:</b> {{ lecture.title }}.</p>
-          <p><b>Class size:</b> {{ class_size }}.</p>
-          <p><b>Frequency:</b> {{ frequency }}.</p>
+          <p>Here be announcements.</p>
         </div>
       </i-column>
-      <i-column xs="4">
+      <i-column xs="6" sm="4">
         <h4>Meeting</h4>
         <div
           class="_border _border-color-gray-70 _background-gray-20 _rounded _display-flex _flex-direction-column _align-items-center _padding-1"
@@ -25,23 +22,33 @@
           </div>
         </div>
       </i-column>
-    </i-row>
-    <i-row top-xs class="_padding-1">
-      <i-column xs="12">
-        <h4>Announcements</h4>
+      <i-column xs="6" class="_display-xs-block _display-sm-none _display-md-none _display-lg-none _display-lg-none _display-xl-none">
+        <h4>Tutor</h4>
         <div
-          class="_border _border-color-gray-70 _background-gray-20 _rounded _padding-1"
+          class="_border _border-color-gray-70 _background-gray-20 _rounded _display-flex _flex-direction-column _align-items-center _padding-1"
         >
-          <p>Here be announcements.</p>
+          <h3 class="_margin-bottom-0">{{ tutor.first_name }} {{ tutor.last_name }}</h3>
+          <h4 class="_margin-top-0 _margin-bottom-2 _text-gray-70">@{{tutor.username}}</h4>
+          <div>
+            <router-link :to="`/users/${tutor._id}`">
+              <img
+                v-if="imgURI"
+                :src="imgURI"
+                width="100"
+                class="_rounded-circle"
+              />
+            </router-link>
+          </div>
         </div>
       </i-column>
     </i-row>
     <i-row top-xs class="_padding-1">
-      <i-column xs="8">
-        <h4>Documents</h4>
+      <i-column xs="12" sm="8">
+        <h4 style="cursor: pointer" @click="$router.push({ params: { page: 'documents' } })">Documents</h4>
         <div
-          class="_position-static _border _border-color-gray-70 _background-gray-20 _rounded _padding-1 _display-flex _flex-direction-row _align-items-stretch"
+          class="_position-static _border _border-color-gray-70 _background-gray-20 _rounded _padding-1"
         >
+        <div class="_display-flex _flex-direction-row _align-items-stretch">
           <div
             @mouseenter="newDocHover = true"
             @mouseleave="newDocHover = false"
@@ -72,8 +79,9 @@
             <span class="_text-center _align-middle"><h1>...</h1></span>
           </div>
         </div>
+        </div>
       </i-column>
-      <i-column xs="4">
+      <i-column xs="4" class="_display-xs-none _display-sm-block">
         <h4>Tutor</h4>
         <div
           class="_border _border-color-gray-70 _background-gray-20 _rounded _display-flex _flex-direction-column _align-items-center _padding-1"
@@ -90,6 +98,16 @@
               />
             </router-link>
           </div>
+        </div>
+      </i-column>
+    </i-row>
+    <i-row top-xs class="_padding-1">
+      <i-column xs="12">
+        <h4>Description</h4>
+        <div
+          class="_border _border-color-gray-70 _background-gray-20 _rounded _padding-1"
+        >
+          {{ putDotAtEnd(description || "") }}
         </div>
       </i-column>
     </i-row>
