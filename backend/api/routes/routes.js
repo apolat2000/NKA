@@ -4,6 +4,7 @@ const userBuilder = require('../controllers/userController');
 const lectureBuilder = require('../controllers/lectureController');
 const docBuilder = require('../controllers/docController')
 const auth = require('../controllers/authController');
+const announcementBuilder = require('../controllers/announcementController');
 const multer = require('multer');
 
 const ppFilter = (req, file, cb) => {
@@ -93,6 +94,13 @@ module.exports = (app, guard) => {  //Add guard to all get/post requests where t
     .get(guard, discussionBuilder.list_all_comments)
     .put(guard, discussionBuilder.update_a_comment)
     .delete(guard, discussionBuilder.delete_a_comment);
+  
+  app
+    .route('/announcement/:tutorialId')
+    .post(guard, announcementBuilder.create_an_announcement);
+  //   .get(guard, announcementBuilder.list_all_announcements)
+  //   .put(guard, announcementBuilder.update_an_announcement)
+  //   .delete(guard, announcementBuilder.delete_an_announcement);
 
   app
     .route('/lectures')

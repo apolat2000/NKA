@@ -20,8 +20,17 @@ export default {
       this.reloadNav();
       console.log("Logged out");
     },
+    reloadNav() {
+      this.$root.$refs.Navbar.reloadNav();
+    },
   },
-  async created() {
+  created() {
+    let jwtToken = localStorage.getItem("jwt_token");
+    if (jwtToken === null || jwtToken === "") {
+      this.logout();
+    }
+  },
+  async mounted() {
     try {
       const jwt_token = localStorage.getItem("jwt_token");
       if (jwt_token) {

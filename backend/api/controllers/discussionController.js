@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Discussion = mongoose.model('Discussions');
-const Tutorial = mongoose.model('Tutorials');
+//const Tutorial = mongoose.model('Tutorials');
 
 // Access database from here, CRUD (Create, Read, Update, Delete) operations
 
@@ -20,7 +20,6 @@ exports.create_a_comment = (req, res) => {
 exports.list_all_comments = (req, res) => {
   let myScope = req.headers['scope'];
   let myTutId = req.params.tutorialId;
-  console.log(myTutId);
 
   if (myScope === 'global') {
     Discussion.find({ tutorialId: myTutId, visibility: 'ALL'}).populate('userId').exec((err, comment) => {
@@ -54,7 +53,7 @@ exports.list_all_comments = (req, res) => {
 };
 
 exports.update_a_comment = (req, res) => {
-  var userInToken = req.user.userId;
+  var userInToken = req.user.userID;
   Discussion.findById(req.body.commentId, (err, comment) => {
     if (err) {
       res.send(err);

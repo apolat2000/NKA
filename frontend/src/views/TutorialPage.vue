@@ -2,23 +2,19 @@
   <i-layout>
     <i-layout-header class="_padding-0">
       <i-navbar
-      fluid
+        fluid
         :collapse="false"
         class="_background-gray-30"
         v-if="loaded && (isStudent || isTutor)"
       >
         <i-navbar-brand class="_margin-left-1">
-          <i-hamburger-menu
-            
-            :active="showSide"
-            @click="showSide = !showSide"
-          >
+          <i-hamburger-menu :active="showSide" @click="showSide = !showSide">
           </i-hamburger-menu>
         </i-navbar-brand>
         <i-navbar-items>
           <div class="_display-flex _flex-direction-column _margin-right-1">
-          <h3 class="_margin-y-0 _text-uppercase">{{ tutorial.title }}</h3>
-          <h6 class="_margin-y-0">{{tutorial.lecture.title}}</h6>
+            <h3 class="_margin-y-0 _text-uppercase">{{ tutorial.title }}</h3>
+            <h6 class="_margin-y-0">{{ tutorial.lecture.title }}</h6>
           </div>
           <i-badge
             class="_margin-right-1"
@@ -32,7 +28,10 @@
           </i-badge>
         </i-navbar-items>
         <i-navbar-items class="_justify-content-end _margin-right-1">
-          <p>{{tutorial.students.length}}/{{ tutorial.class_size }} <span><i class="users icon"></i></span></p>
+          <p>
+            {{ tutorial.students.length }}/{{ tutorial.class_size }}
+            <span><i class="users icon"></i></span>
+          </p>
         </i-navbar-items>
       </i-navbar>
     </i-layout-header>
@@ -45,45 +44,63 @@
       >
         <i-nav
           vertical
-          class="_display-flex _flex-direction-column _align-items-stretch _padding-top-2 _padding-left-2"
+          class="_display-flex _flex-direction-column _justify-content-space-between _align-items-stretch _padding-top-2 _padding-left-2"
         >
-          <h3
-            @click="$router.push({ params: { page: 'summary' } })"
-            :class="$route.params.page === 'summary' ? classChosen : classNot"
-            style="cursor: pointer"
-            class="_margin-bottom-2 _margin-top-0"
-          >
-            Summary
-          </h3>
-          <h3
-            @click="$router.push({ params: { page: 'announcements' } })"
-            :class="
-              $route.params.page === 'announcements' ? classChosen : classNot
-            "
-            style="cursor: pointer"
-            class="_margin-bottom-1 _margin-top-0"
-          >
-            Announcements
-          </h3>
-          <h3
-            @click="$router.push({ params: { page: 'documents' } })"
-            :class="$route.params.page === 'documents' ? classChosen : classNot"
-            style="cursor: pointer"
-            class="_margin-bottom-1 _margin-top-0"
-          >
-            Documents
-          </h3>
-          <h3
-            @click="$router.push({ params: { page: 'feed' } })"
-            :class="$route.params.page === 'feed' ? classChosen : classNot"
-            style="cursor: pointer"
-            class="_margin-bottom-1 _margin-top-0"
-          >
-            Feed
-          </h3>
+          <div>
+            <h3
+              @click="$router.push({ params: { page: 'summary' } })"
+              :class="$route.params.page === 'summary' ? classChosen : classNot"
+              style="cursor: pointer"
+              class="_margin-bottom-2 _margin-top-0"
+            >
+              Summary
+            </h3>
+            <h3
+              @click="$router.push({ params: { page: 'announcements' } })"
+              :class="
+                $route.params.page === 'announcements' ? classChosen : classNot
+              "
+              style="cursor: pointer"
+              class="_margin-bottom-1 _margin-top-0"
+            >
+              Announcements
+            </h3>
+            <h3
+              @click="$router.push({ params: { page: 'documents' } })"
+              :class="
+                $route.params.page === 'documents' ? classChosen : classNot
+              "
+              style="cursor: pointer"
+              class="_margin-bottom-1 _margin-top-0"
+            >
+              Documents
+            </h3>
+            <h3
+              @click="$router.push({ params: { page: 'feed' } })"
+              :class="$route.params.page === 'feed' ? classChosen : classNot"
+              style="cursor: pointer"
+              class="_margin-bottom-1 _margin-top-0"
+            >
+              Feed
+            </h3>
+          </div>
+          <div>
+            <h3
+              v-if="getScope() === 'student'"
+              @click="joinOrQuit(false)"
+              :class="$route.params.page === 'feed' ? classChosen : classNot"
+              style="cursor: pointer"
+              class="_margin-top-2 _text-red"
+            >
+              Quit tutorial
+            </h3>
+          </div>
         </i-nav>
       </i-sidebar>
       <i-layout-content v-if="$route.params.page === 'join'">
+        <i-button @click="joinOrQuit(true)" variant="primary">
+          {{ tutorial.join_freely ? "Join tutorial" : "send join request" }}
+        </i-button>
         <img src="../assets/resources.png" />
       </i-layout-content>
       <i-layout-content v-else-if="loaded && (isStudent || isTutor)">
@@ -124,6 +141,14 @@
           :scope="getScope()"
           class="m-4 mt-8"
         />
+        <announ 
+          v-if="this.$route.params.page === 'announcements' && this.tutorial._id"
+          :tutorialId="tutorial._id"
+          :isTutor="isTutor"
+          :isStudent="isStudent"
+          :scope="getScope()"
+          class="m-4 mt-8"
+        />
       </i-layout-content>
       <i-layout-content v-else>
         <h4>LOADING</h4>
@@ -137,6 +162,7 @@ import axios from "axios";
 //import TutPageSide from "../components/tutorial/TutPageSide.vue";
 import TutSum from "../components/tutorial/TutSum.vue";
 import Feed from "../components/tutorial/feed/Feed.vue";
+import Announ from "../components/tutorial/announ/Announ.vue";
 //import TutPageLoading from '../components/tutorial/TutPageLoading.vue'
 
 export default {
@@ -145,6 +171,7 @@ export default {
     //TutPageSide,
     TutSum,
     Feed,
+    Announ
     // TutPageLoading
   },
   data() {
@@ -156,12 +183,76 @@ export default {
       loaded: false,
       doc: "",
       docs: [],
+      announcements: [],
       showSide: false,
       classNot: "",
       classChosen: "_text-primary",
     };
   },
   methods: {
+    logout() {
+      localStorage.clear();
+      this.$router.push("/login");
+      this.reloadNav();
+      console.log("Logged out");
+    },
+    joinOrQuit(join) {
+      let userId = localStorage.getItem("userID");
+      let userScope = this.getScope();
+      if (userScope === "global") {
+        if (join) {
+          if (this.tutorial.join_freely) {
+            if (!this.tutorial.students.includes(userId)) {
+              try {
+                axios.put(
+                  `http://localhost:3000/tutorial/${this.tutorial._id}`,
+                  {},
+                  {
+                    headers: {
+                      Authorization: `Bearer ${localStorage.getItem(
+                        "jwt_token"
+                      )}`,
+                      Action: "join",
+                    },
+                  }
+                );
+                this.isStudent = true;
+                this.$router.push({ params: { page: "summary" } });
+              } catch (err) {
+                window.alert("could not join");
+                console.log(err);
+              }
+            }
+          }
+        }
+      } else if (userScope === "student") {
+        if (!join) {
+          // quitting
+          if (this.tutorial.students.includes(userId)) {
+            try {
+              axios.put(
+                `http://localhost:3000/tutorial/${this.tutorial._id}`,
+                {},
+                {
+                  headers: {
+                    Authorization: `Bearer ${localStorage.getItem(
+                      "jwt_token"
+                    )}`,
+                    Action: "quit",
+                  },
+                }
+              );
+              this.isStudent = false;
+              this.$router.push({ params: { page: "join" } });
+            } catch (err) {
+              window.alert("could not join");
+              console.log(err);
+            }
+          }
+        }
+      }
+      this.$forceUpdate();
+    },
     getScope() {
       return this.isTutor ? "tutor" : this.isStudent ? "student" : "global";
     },
@@ -199,14 +290,14 @@ export default {
   },
   created() {
     //user is not authorized => Remain at login page
-    if (localStorage.getItem("jwt_token") === null) {
-      this.$router.push("/login");
+    let jwtToken = localStorage.getItem("jwt_token");
+    if (jwtToken === null || jwtToken === "") {
+      this.logout();
     }
   },
   async mounted() {
     try {
       const jwt_token = localStorage.getItem("jwt_token");
-      const userID = localStorage.getItem("userID");
       if (jwt_token) {
         let result = await axios.post(
           "http://localhost:3000/verifyRefreshToken",
@@ -221,82 +312,80 @@ export default {
           localStorage.setItem("jwt_token", result.data.jwt_token);
           console.log("refreshed token");
         }
-
-        if (this.$route.params.page !== "join") {
-          let resTut = await axios.get(
-            "http://localhost:3000/tutorial/" + this.$route.params.id,
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
-                Wanted: "whole",
-                Whats_my_scope: userID,
-              },
-            }
-          );
-
-          let clientScope = resTut.headers.client_scope;
-
-          if (clientScope === "visitor") {
-            this.$router.push({ params: { page: "join" } });
-          }
-
-          clientScope === "tutor"
-            ? (this.isTutor = true)
-            : (this.isStudent = true);
-
-          this.tutorial = resTut.data;
-
-          if (this.tutorial.tutor.img_path !== "") {
-            if (this.tutorial.tutor.img_path.length > 0) {
-              let imageResult = await axios.head(
-                "http://localhost:3000/" + this.tutorial.tutor.img_path
-              );
-              if (imageResult.status === 200) {
-                this.imgURI =
-                  "http://localhost:3000/" + this.tutorial.tutor.img_path;
-              }
-            }
-          } else {
-            this.imgURI = "http://localhost:3000/profilepics/defUser.png";
-          }
-
-          let resDoc = await axios.get(
-            "http://localhost:3000/docs/" + this.tutorial._id,
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
-                Scope: this.getScope(),
-              },
-            }
-          );
-
-          this.docs = resDoc.data;
-
-          this.loaded = true;
-          console.log(this.loaded);
-        } else {
-          let resTut = await axios.get(
-            "http://localhost:3000/tutorial/" + this.$route.params.id,
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
-                Wanted: "whole",
-                Whats_my_scope: userID,
-              },
-            }
-          );
-
-          let clientScope = resTut.headers.client_scope;
-
-          if (clientScope !== "visitor") {
-            this.$router.push({ params: { page: "summary" } });
-          }
-
-          this.tutorial = resTut.data;
-        }
       }
     } catch (err) {
       console.log(err.message);
+      this.logout();
+    }
+
+    const userID = localStorage.getItem("userID");
+
+    if (this.$route.params.page !== "join") {
+      let resTut = await axios.get(
+        "http://localhost:3000/tutorial/" + this.$route.params.id,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+            Wanted: "whole",
+            Whats_my_scope: userID,
+          },
+        }
+      );
+
+      let clientScope = resTut.headers.client_scope;
+
+      if (clientScope === "visitor") {
+        this.$router.push({ params: { page: "join" } });
+      }
+
+      clientScope === "tutor" ? (this.isTutor = true) : (this.isStudent = true);
+
+      this.tutorial = resTut.data;
+
+      if (this.tutorial.tutor.img_path !== "") {
+        if (this.tutorial.tutor.img_path.length > 0) {
+          let imageResult = await axios.head(
+            "http://localhost:3000/" + this.tutorial.tutor.img_path
+          );
+          if (imageResult.status === 200) {
+            this.imgURI =
+              "http://localhost:3000/" + this.tutorial.tutor.img_path;
+          }
+        }
+      } else {
+        this.imgURI = "http://localhost:3000/profilepics/defUser.png";
+      }
+
+      let resDoc = await axios.get(
+        "http://localhost:3000/docs/" + this.tutorial._id,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+            Scope: this.getScope(),
+          },
+        }
+      );
+      this.docs = resDoc.data;
+      this.loaded = true;
+    } else {
+      let resTut = await axios.get(
+        "http://localhost:3000/tutorial/" + this.$route.params.id,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+            Wanted: "whole",
+            Whats_my_scope: userID,
+          },
+        }
+      );
+
+      let clientScope = resTut.headers.client_scope;
+
+      if (clientScope !== "visitor") {
+        this.$router.push({ params: { page: "summary" } });
+      }
+
+      this.tutorial = resTut.data;
     }
   },
 };

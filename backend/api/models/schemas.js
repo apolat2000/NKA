@@ -13,7 +13,7 @@ const tutorialsSchema = new Schema(
     students: [
       { type: Schema.Types.ObjectId, ref: "Users" }, //foreign keys -- redundant because tutorial IDs are saved in user.student_in
     ],
-    
+
     lecture: { type: Schema.Types.ObjectId, ref: "Lectures" }, //foreign key
     title: String,
     creation_date: { type: Date, default: Date.now },
@@ -23,7 +23,8 @@ const tutorialsSchema = new Schema(
       enum: ['WEEKLY', 'MONTHLY', 'IRREGULAR', 'ONE-SHOT']
     },
     description: String,
-    is_active: Boolean
+    is_active: Boolean,
+    join_freely: { type: Boolean, default: true }
   },
   { collection: "Tutorials" }
 );
@@ -115,10 +116,27 @@ const discussionsSchema = new Schema({
   { collection: "Discussions" }
 );
 
+const announcementsSchema = new Schema({
+  corpus: String,
+  creation_date: { type: Date, default: Date.now },
+  variant: {
+    type: String,
+    enum: ['WARNING', 'INFO', 'USUAL']
+  },
+  importance: {
+    type: String,
+    enum: ['KINDA', 'IMPORTANT', 'REALLY']
+  },
+  tutorialId: { type: Schema.Types.ObjectId, ref: "Tutorials" } //foreign key
+},
+  { collection: "Announcements" }
+);
+
 const Users = mongoose.model('Users', usersSchema);
 const Tutorials = mongoose.model('Tutorials', tutorialsSchema);
 const Lectures = mongoose.model('Lectures', lecturesSchema);
 const Discussions = mongoose.model('Discussions', discussionsSchema);
 const Docs = mongoose.model('Docs', docsSchema);
+const Announcements = mongoose.model('Announcements', announcementsSchema);
 
-module.exports = { Users, Tutorials, Lectures, Discussions };
+module.exports = { Users, Tutorials, Lectures, Discussions, Docs, Announcements };

@@ -66,7 +66,6 @@ exports.read_a_tutorial = (req, res) => {
     let tutorId = tutorial.tutor.toString();
     if (tutorId === client_id) {
       if (wanted === "whole") {
-        console.log('right block');
         Tutorial.findById(req.params.tutorialId).populate('lecture', 'title').populate('tutor', ['first_name', 'last_name', 'img_path', 'username']).exec((err, tutorial) => {
           if (err) {
             res.send(err);
@@ -116,6 +115,7 @@ exports.read_a_tutorial = (req, res) => {
 
 exports.update_a_tutorial = (req, res) => {
   var userInToken = req.user.userID;
+  let action = req.headers['action'];
   Tutorial.findById(req.params.tutorialId, (err, tutorial) => {
     if (err) {
       res.send(err);
@@ -123,6 +123,29 @@ exports.update_a_tutorial = (req, res) => {
     }
     else if (!tutorial) {
       res.status(404).send();
+      return;
+    }
+    else if (action === 'join') {
+      Tutorial.findOneAndUpdate(
+        { _id: tutorial._id },
+        { $addToSet: { students: [userInToken] } },
+        { new: false },
+        (err) => {
+          if (err) res.send(err);
+        }
+      );
+      return;
+    }
+    else if (action === 'quit') {
+      Tutorial.findOneAndUpdate(
+        { _id: tutorial._id },
+        { $pullAll: { students: [userInToken] } },
+        { new: false },
+        (err, tutorial) => {
+          if (err) res.send(err);
+          else if (tutorial.tutor != userInToken) res.status(401).send({ message: "Unauthorized access" });
+        }
+      );
       return;
     }
     else if (tutorial.tutor != userInToken) {

@@ -38,9 +38,10 @@
           <i-button variant="primary">{{ this.getName() }}</i-button>
           <i-dropdown-menu>
             <i-dropdown-item
-              @click="$router.push(`/users/${getUserId()}`)"
-              href=""
-              >Your profile</i-dropdown-item
+              :to="{ name: 'user-page', params: { id: getUserId()} }"
+              >
+              Your profile
+              </i-dropdown-item
             >
             <i-dropdown-item href="">Settings</i-dropdown-item>
             <i-dropdown-item href="" disabled

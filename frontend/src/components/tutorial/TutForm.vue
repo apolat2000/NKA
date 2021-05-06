@@ -37,10 +37,7 @@
 
           <i-form-group>
             <i-form-label>Title</i-form-label>
-            <i-input
-              v-model="title"
-              placeholder="A brief description."
-            />
+            <i-input v-model="title" placeholder="A brief description." />
           </i-form-group>
 
           <i-form-group>
@@ -66,9 +63,27 @@
           </i-form-group>
 
           <i-form-group>
+            <i-form-label>Allow... </i-form-label>
+            <i-radio-group v-model="joinFreely">
+            <i-radio :value="true">everyone to join.</i-radio>
+            <i-radio :value="false">after you accept join request.</i-radio>
+          </i-radio-group>
+          </i-form-group>
+
+          <i-form-group>
             <i-form-label>Select date</i-form-label>
-            <br>
-            <flat-pickr v-model="firstdate" :config="{minDate: Date(), altInput: true, dateFormat: 'Z', altFormat: 'j.n.Y, H:i:S.', enableTime: true, time_24hr: true}"></flat-pickr>
+            <br />
+            <flat-pickr
+              v-model="firstdate"
+              :config="{
+                minDate: Date(),
+                altInput: true,
+                dateFormat: 'Z',
+                altFormat: 'j.n.Y, H:i:S.',
+                enableTime: true,
+                time_24hr: true,
+              }"
+            ></flat-pickr>
           </i-form-group>
           <i-form-group>
             <i-form-label>Description</i-form-label>
@@ -79,7 +94,7 @@
           </i-form-group>
           <i-form-group class="_display-flex _flex-direction-row-reverse">
             <i-button variant="primary" type="submit"
-              ><i-icon  icon="plus" class="_margin-right-1" size="sm" />Create
+              ><i-icon icon="plus" class="_margin-right-1" size="sm" />Create
               new tutorial</i-button
             >
           </i-form-group>
@@ -87,113 +102,11 @@
       </i-column>
     </i-row>
   </i-container>
-
-  <!-- <div>
-    <t-alert
-      variant="danger"
-      class="w-2/5 block self-center mx-auto mb-8"
-      :show="showAlert"
-      >All fields are required! Please fill {{ oblig }}.</t-alert
-    >
-    <div class="self-center w-4/5 sm:w-3/4 lg:w-1/3 mx-auto mb-8">
-      <form @submit.prevent="checkForm" method="POST">
-        <div class="shadow bg-gradient-to-b from-blue-700 to-indigo-800 overflow-hidden sm:rounded-md">
-          <div class="px-4 py-5 sm:p-6">
-            <div class="grid grid-cols-6 gap-6">
-              <div class="col-span-6">
-                <label
-                  for="lecture"
-                  class="font-semibold block text-m text-white"
-                  >Lecture</label
-                >
-                <t-select
-                  v-model="lecture"
-                  placeholder=""
-                  :options="lectures"
-                />
-              </div>
-              <div class="col-span-6">
-                <label
-                  for="title"
-                  class="font-bold font-lato block text-m text-white"
-                  >Title</label
-                >
-                <t-input
-                  v-model="title"
-                  placeholder="An utmost brief description."
-                />
-              </div>
-
-              <div class="col-span-6">
-                <label
-                  for="frequency"
-                  class="font-semibold block text-m text-white"
-                  >Frequency</label
-                >
-                <t-select
-                  v-model="frequency"
-                  :options="['WEEKLY', 'MONTHLY', 'IRREGULAR', 'ONE-SHOT']"
-                />
-              </div>
-
-              <div class="col-span-6">
-                <label
-                  for="classsize"
-                  class="font-bold font-lato block text-m text-white"
-                  >Class Size</label
-                >
-                <t-input
-                  v-model="classsize"
-                  :min="1"
-                  :max="15"
-                  placeholder="A number between 1 and 15 (inclusive)."
-                />
-              </div>
-
-              <div class="col-span-6">
-                <label
-                  for="firstdate"
-                  class="font-semibold block text-m text-white"
-                  >First Date & Time</label
-                >
-                <t-datepicker
-                  v-model="firstdate"
-                  date-format="Z"
-                  user-format="j.n.Y, H:i:S."
-                />
-              </div>
-
-              <div class="col-span-6 sm:col-span-4">
-                <label
-                  for="description"
-                  class="font-semibold block text-m text-white"
-                >
-                  Description
-                </label>
-                <div class="mt-1">
-                  <t-textarea
-                    v-model="description"
-                    :maxlength="400"
-                    placeholder="Tell your future students about your tutorial in detail. You can update this anytime you like."
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="px-4 pt-3 pb-8 text-right sm:px-6">
-            <t-button type="submit"
-              ><i class="plus circle icon"></i>{{ buttonValue }}</t-button
-            >
-          </div>
-        </div>
-      </form>
-    </div>
-  </div> -->
 </template>
 
 <script>
-import flatPickr from 'vue-flatpickr-component';
-import 'flatpickr/dist/flatpickr.css';
+import flatPickr from "vue-flatpickr-component";
+import "flatpickr/dist/flatpickr.css";
 import axios from "axios";
 
 export default {
@@ -210,6 +123,7 @@ export default {
   },
   data() {
     return {
+      joinFreely: true,
       showAlert: false,
       oblig: "First Name",
       buttonValue: "Create Tutorial",
@@ -271,18 +185,21 @@ export default {
           frequency: this.frequency,
           description: this.description,
           is_active: true,
+          join_freely: this.joinFreely,
         };
         console.log(tut);
         axios
           .post(`http://localhost:3000/tutorials`, tut)
           .then((response) => {
             console.log(response.data);
-            this.$router.push({ name: "tutorial-page", params: { id: response.data, page: 'summary' } });
+            this.$router.push({
+              name: "tutorial-page",
+              params: { id: response.data, page: "summary" },
+            });
           })
           .catch((e) => {
             console.log(e);
           });
-        
       }
     },
   },

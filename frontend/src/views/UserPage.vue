@@ -31,7 +31,7 @@
           />
           <i-modal v-model="bioEdit">
             <template slot="header">Edit your bio</template>
-            <i-form v-model="form" @submit="bioAction(true)">
+            <i-form v-model="form">
               <i-form-group>
                 <i-textarea
                   v-model="bioText"
@@ -40,17 +40,15 @@
                   placeholder="Your bio here..."
                 />
               </i-form-group>
-              <i-form-group class="_display-flex _justify-content-space-between">
-                <i-button type="submit" variant="success"
-                  >Save</i-button
-                >
+              <i-form-group
+                class="_display-flex _justify-content-space-between"
+              >
+                <i-button type="submit" variant="success" @click="bioAction(true)">Save</i-button>
                 <i-button variant="danger" @click="bioAction(false)"
                   >Discard</i-button
                 >
               </i-form-group>
             </i-form>
-
-            
           </i-modal>
           <!-- <bio-edit v-on:closedBio="bioAction" :show="bioEdit" /> -->
         </i-column>
@@ -86,21 +84,15 @@ export default {
   },
   created() {
     //user is not authorized => Remain at login page
-    if (localStorage.getItem("jwt_token") === null) {
-      this.$router.push("/login");
+    let jwtToken = localStorage.getItem("jwt_token");
+    if (jwtToken === null || jwtToken === "") {
+      console.log('yarraa');
+      this.logout();
     }
   },
   async mounted() {
-    let routerId = this.$route.params.id;
-    let usr_id = localStorage.getItem("userID");
-
-    if (routerId === usr_id) {
-      this.isEditable = true;
-    } else {
-      this.isEditable = false;
-    }
     try {
-      const jwt_token = localStorage.getItem("jwt_token");
+      let jwt_token = localStorage.getItem("jwt_token");
       if (jwt_token) {
         let result = await axios.post(
           "http://localhost:3000/verifyRefreshToken",
@@ -113,15 +105,27 @@ export default {
         );
         if (result.status === 200) {
           localStorage.setItem("jwt_token", result.data.jwt_token);
+          console.log("refreshed token");
         }
       }
     } catch (err) {
-      console.log(err.message);
+      console.log(err);
+      this.logout();
+    }
+
+    let routerId = this.$route.params.id;
+    let usr_id = localStorage.getItem("userID");
+    let jwt_token = localStorage.getItem("jwt_token");
+
+    if (routerId === usr_id) {
+      this.isEditable = true;
+    } else {
+      this.isEditable = false;
     }
 
     let resultt = await axios.get("http://localhost:3000/user/" + routerId, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+        Authorization: `Bearer ${jwt_token}`,
       },
     });
     this.profileObject.course_of_study = resultt.data.course_of_study || [];
@@ -149,6 +153,15 @@ export default {
     }
   },
   methods: {
+    logout() {
+      localStorage.clear();
+      this.$router.push("/login");
+      this.reloadNav();
+      console.log("Logged out");
+    },
+    reloadNav() {
+      this.$root.$refs.Navbar.reloadNav();
+    },
     bioAction: async function (isSuccess) {
       this.bioEdit = false;
       if (isSuccess) {

@@ -6,13 +6,9 @@ const jwt = require("jsonwebtoken");
 const fs = require("fs")
 
 exports.create_a_doc = async (req, res) => {
-    console.log(req.body);
-    console.log(req.file);
 
     var userInToken = req.user.userID;
     let myTutId = req.params.tutorialId;
-    console.log(userInToken);
-    console.log(myTutId);
 
     if(req.file) {
         let docToCreate = new Doc({
@@ -39,7 +35,7 @@ exports.create_a_doc = async (req, res) => {
 };
 
 exports.update_a_doc = (req, res) => {
-    var userInToken = req.user.userId;
+    var userInToken = req.user.userID;
     if(req.file) req.body.doc_path = req.file.path;
     else throw new Error('no file found');
     Doc.findById(req.body.docId, (err, doc) => {
@@ -71,7 +67,6 @@ exports.update_a_doc = (req, res) => {
 exports.list_all_docs = (req, res) => {
     let myScope = req.headers['scope'];
     let myTutId = req.params.tutorialId;
-    console.log(myScope + myTutId);
   
     if (myScope === 'global') {
       Doc.find({ tut: myTutId, visibility: 'ALL'}).exec((err, doc) => {

@@ -45,7 +45,7 @@
       <i-list-group-item v-if="isEditable">
         <i-tooltip placement="bottom" variant="dark">
           <p @click="tellViewClickedOnBioEdit()" style="cursor: pointer">
-            {{ bio }}
+            {{ bio === "" ? "no bio" : bio }}
           </p>
           <template slot="body">Click to edit your bio.</template>
         </i-tooltip>
