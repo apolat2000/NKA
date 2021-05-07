@@ -123,10 +123,7 @@ const announcementsSchema = new Schema({
     type: String,
     enum: ['WARNING', 'INFO', 'USUAL']
   },
-  importance: {
-    type: String,
-    enum: ['KINDA', 'IMPORTANT', 'REALLY']
-  },
+  importance: Number, //1 === 'KINDA, 2 === 'IMPORTANT', 3 === 'REALLY'
   tutorialId: { type: Schema.Types.ObjectId, ref: "Tutorials" } //foreign key
 },
   { collection: "Announcements" }

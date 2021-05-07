@@ -15,6 +15,8 @@ import IsTutIsStud from './views/Entwurf/IsTutIsStud.vue';
 import NotTutIsStud from './views/Entwurf/NotTutIsStud.vue';
 import IsTutNotStud from './views/Entwurf/IsTutNotStud.vue';
 import NotTutNotStud from './views/Entwurf/NotTutNotStud.vue';
+import Forgot from './components/auth/Forgot.vue';
+import Reset from './components/auth/Reset.vue';
 
 Vue.use(Router);
 
@@ -53,6 +55,20 @@ export default new Router({
       path: '/login',
       name: 'login',
       component: Login
+    },
+    {
+      path: '/login/forgot',
+      name: 'forgot',
+      component: Forgot
+    },
+    {
+      path: '/reset/:token',
+      name: 'Reset Your Password',
+      component: Reset,
+      meta: {
+        auth: true,
+        title: 'NKA: Reset Your Password'
+      }
     },
     {
       path: '/register',
@@ -94,6 +110,6 @@ export default new Router({
     //   name: 'edit',
     //   component: Edit
     // }
-   
+
   ]
 });

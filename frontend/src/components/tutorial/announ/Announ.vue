@@ -1,45 +1,86 @@
 <template>
   <div>
+    <div v-if="isTutor">
       {{ corpus }}
-    <i-alert dismissible :show="alertVisible" variant="warning">
-      <template slot="icon"><i-icon icon="warning"></i-icon></template>
-      <p>
-        Some quick example text to build on the alert title and make up the bulk
-        of the alert's content.
-      </p>
-    </i-alert>
-    <i-form
-      class="_margin-x-4 _diplay-flex _flex-direction-column _width-50"
-      @submit.prevent="handleSubmit"
-      accept-charset="UTF-8"
-      method="post"
-      v-model="textArea"
+      <i-alert dismissible :show="alertVisible" variant="warning">
+        <template slot="icon"><i-icon icon="warning"></i-icon></template>
+        <p>
+          Some quick example text to build on the alert title and make up the
+          bulk of the alert's content.
+        </p>
+      </i-alert>
+      <i-form
+        class="_margin-x-4 _diplay-flex _flex-direction-column _width-50"
+        @submit.prevent="handleSubmit"
+        accept-charset="UTF-8"
+        method="post"
+        v-model="textArea"
+      >
+        <i-form-group>
+          <i-textarea
+            :schema="textArea.input"
+            v-model="corpus"
+            placeholder="Share an announcement with your students."
+          />
+        </i-form-group>
+        <i-form-group>
+          <div class="_display-flex _justify-items-center">
+            <i-select v-model="variant">
+              <i-select-option :value="'USUAL'" label="Usual" />
+              <i-select-option :value="'INFO'" label="Info" />
+              <i-select-option :value="'WARNING'" label="Warning" />
+            </i-select>
+            <i-select v-model="importance">
+              <i-select-option :value="1" label="Kinda important" />
+              <i-select-option :value="2" label="Important" />
+              <i-select-option :value="3" label="Really important" />
+            </i-select>
+            <i-button
+              ><img style="height: 21px" src="../../../assets/lightning.png"
+            /></i-button>
+          </div>
+        </i-form-group>
+      </i-form>
+    </div>
+    <div
+      style="padding-left: 2.5px; padding-right: 2.5px"
+      class="_display-flex _justify-content-space-between"
     >
-      <i-form-group>
-        <i-textarea
-          :schema="textArea.input"
-          v-model="corpus"
-          placeholder="Share an announcement with your students."
-        />
-      </i-form-group>
-      <i-form-group>
-      <div class="_display-flex _justify-items-center">
-        <i-select v-model="variant">
-          <i-select-option :value="'USUAL'" label="Usual" />
-          <i-select-option :value="'INFO'" label="Info" />
-          <i-select-option :value="'WARNING'" label="Warning" />
-        </i-select>
-        <i-select v-model="importance">
-          <i-select-option value="KINDA" label="Kinda important" />
-          <i-select-option value="IMPORTANT" label="Important" />
-          <i-select-option value="REALLY" label="Really important" />
-        </i-select>
-        <i-button
-          ><img style="height: 21px" src="../../../assets/lightning.png"
-        /></i-button>
+      <div
+        style="
+          margin-left: 2.5px;
+          margin-right: 2.5px;
+          margin-top: 5px;
+          margin-bottom: 5px;
+        "
+        class="_width-25"
+        v-for="ann in announcements"
+        :key="ann._id"
+      >
+        <i-card
+          :size="annSize(ann.importance)"
+          :variant="annVariant(ann.variant)"
+        >
+        <template slot="header">
+            <p>
+              <i-icon
+                :icon="
+                  ann.variant === 'WARNING'
+                    ? 'warning'
+                    : ann.variant === 'INFO'
+                    ? 'info'
+                    : 'envelope'
+                "
+              />
+              {{ niceDate(ann.creation_date) }}
+            </p>
+          </template>
+          <p>
+            {{ ann.corpus }}
+          </p>
+        </i-card>
       </div>
-      </i-form-group>
-    </i-form>
+    </div>
   </div>
 </template>
 
@@ -55,18 +96,72 @@ export default {
   },
   data() {
     return {
-      importance: "KINDA", // enum: ['KINDA', 'IMPORTANT', 'REALLY']
+      importance: 1, //1 === 'KINDA, 2 === 'IMPORTANT', 3 === 'REALLY'
+      announcements: [],
       variant: "USUAL", // enum: ['WARNING', 'INFO', 'USUAL']
       corpus: "",
       alertVisible: false,
       textArea: this.$inkline.form({
         input: {
-          validators: [{ rule: "required" }, { rule: "maxLength", value: 1000 }]
+          validators: [
+            { rule: "required" },
+            { rule: "maxLength", value: 1000 },
+          ],
         },
       }),
     };
   },
   methods: {
+    annVariant: function (text) {
+      switch (text) {
+        case "WARNING":
+          return "warning";
+        case "INFO":
+          return "info";
+        default:
+          return "success";
+      }
+    },
+    annSize: function (importance) {
+      switch (importance) {
+        case 1:
+          return "sm";
+        case 2:
+          return "md";
+        default:
+          return "lg";
+      }
+    },
+    niceDate: function (myDate) {
+      const monthNames = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+      const dateObj = new Date(myDate);
+      const month = monthNames[dateObj.getMonth()];
+      const day = String(dateObj.getDate()).padStart(2, "0");
+      const year = dateObj.getFullYear();
+      const hours =
+        String(dateObj.getHours()).length === 1
+          ? "0" + dateObj.getHours()
+          : dateObj.getHours();
+      const mins =
+        String(dateObj.getMinutes()).length === 1
+          ? "0" + dateObj.getMinutes()
+          : dateObj.getMinutes();
+      const output = day + " " + month + " " + year + ", " + hours + ":" + mins;
+      return output;
+    },
     handleSubmit: async function postAnnouncement() {
       if (this.corpus !== "" && this.corpus.length <= 1000) {
         try {
@@ -95,6 +190,19 @@ export default {
         return false;
       }
     },
+  },
+  async mounted() {
+    let resAnn = await axios.get(
+      "http://localhost:3000/announcement/" + this.tutorialId,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+          Page: "announcements",
+        },
+      }
+    );
+
+    this.announcements = resAnn.data;
   },
 };
 </script>

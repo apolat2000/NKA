@@ -4,21 +4,37 @@
       <i-column xs="12" sm="8" class="_margin-bottom-1">
         <h4>Announcements</h4>
         <div
-          class="_border _border-color-gray-70 _background-gray-20 _rounded _padding-1"
+          style="padding-left: 2.5px; padding-right: 2.5px;"
+          class="_display-flex _justify-content-space-between"
         >
           <div
-            v-for="doc in docs"
-            :key="doc._id"
-            class="_width-25 _padding-1 _margin-1 _border _border-color-gray-40 _background-white _rounded _text-center"
+            style="margin-left: 2.5px; margin-right: 2.5px; margin-top: 5px; margin-bottom: 5px;"
+            class="_width-25"
+            v-for="ann in announcements"
+            :key="ann._id"
           >
-            <p>{{ doc.title }}</p>
-          </div>
-
-          <div
-            v-if="docs_sliced"
-            class="_width-25 _display-flex _flex-direction-column _justify-content-center"
-          >
-            <span class="_text-center _align-middle"><h1>...</h1></span>
+            <i-card
+              :size="annSize(ann.importance)"
+              :variant="annVariant(ann.variant)"
+            >
+              <p>
+                {{ ann.corpus }}
+              </p>
+              <template slot="footer">
+                <p>
+                  <i-icon
+                    :icon="
+                      ann.variant === 'WARNING'
+                        ? 'warning'
+                        : ann.variant === 'INFO'
+                        ? 'info'
+                        : ''
+                    "
+                  />
+                  {{ niceDate(ann.creation_date) }}
+                </p>
+              </template>
+            </i-card>
           </div>
         </div>
       </i-column>
@@ -170,10 +186,31 @@ export default {
     loaded: Boolean,
     docs: Array,
     docs_sliced: Boolean,
+    announcements: Array,
   },
   methods: {
     tellViewClickedOnNewDoc: function () {
       this.$emit("clickedOnNewDoc");
+    },
+    annVariant: function (text) {
+      switch (text) {
+        case "WARNING":
+          return "warning";
+        case "INFO":
+          return "info";
+        default:
+          return "success";
+      }
+    },
+    annSize: function (importance) {
+      switch (importance) {
+        case 1:
+          return "sm";
+        case 2:
+          return "md";
+        default:
+          return "lg";
+      }
     },
     putDotAtEnd: function (text) {
       return text.slice(-1) === "." ? text : text + ".";

@@ -9,7 +9,7 @@ exports.create_an_announcement = (req, res) => {
     let tutorialId = req.params.tutorialId;
 
     Tutorial.findById(tutorialId).select('tutor').exec((err, tutorial) => {
-        if (""+tutorial.tutor._id === userInToken) {
+        if ("" + tutorial.tutor._id === userInToken) {
             var newAnnouncement = new Announcement(req.body);
             newAnnouncement.tutorialId = tutorialId;
             newAnnouncement.save((err, announcement) => {
@@ -25,12 +25,13 @@ exports.create_an_announcement = (req, res) => {
 };
 
 exports.list_all_announcements = (req, res) => {
-    let myScope = req.headers['scope'];
-    let myTutId = req.params.tutorialId;
-    console.log(myTutId);
 
-    if (myScope === 'global') {
-        Discussion.find({ tutorialId: myTutId, visibility: 'ALL' }).populate('userId').exec((err, announcement) => {
+    let where = req.headers['page'];
+    let myTutId = req.params.tutorialId;
+
+    if (where === "summary") {
+
+        Announcement.find({ tutorialId: myTutId }).sort({importance: -1}).limit(4).exec((err, announcement) => {
             if (err) {
                 res.send(err);
             }
@@ -38,17 +39,11 @@ exports.list_all_announcements = (req, res) => {
                 res.json(announcement);
             }
         });
-    } else if (myScope === 'student') {
-        Discussion.find({ tutorialId: myTutId }).or([{ visibility: { $in: ['ALL', 'CLASS'] } }, { userId: req.user.userID }]).populate('userId').exec((err, announcement) => {
-            if (err) {
-                res.send(err);
-            }
-            else {
-                res.json(announcement);
-            }
-        });
-    } else if (myScope === 'tutor') {
-        Discussion.find({ tutorialId: myTutId }).or([{ visibility: { $in: ['ALL', 'CLASS', 'TUTOR'] } }, { userId: req.user.userID }]).populate('userId').exec((err, announcement) => {
+
+    } else if (where === "homepage") {
+
+    } else if (where === "announcements") {
+        Announcement.find({ tutorialId: myTutId }).sort({_id: -1}).exec((err, announcement) => {
             if (err) {
                 res.send(err);
             }

@@ -129,6 +129,7 @@
           :isStudent="isStudent"
           :imgURI="imgURI"
           :loaded="loaded"
+          :announcements="announcements"
           :docs="docs.length < 3 ? docs : docs.slice(0, 2)"
           :docs_sliced="docs.length >= 3"
           v-on:clickedOnNewDoc="$refs.doc.click()"
@@ -296,8 +297,8 @@ export default {
     }
   },
   async mounted() {
+    const jwt_token = localStorage.getItem("jwt_token");
     try {
-      const jwt_token = localStorage.getItem("jwt_token");
       if (jwt_token) {
         let result = await axios.post(
           "http://localhost:3000/verifyRefreshToken",
@@ -320,12 +321,15 @@ export default {
 
     const userID = localStorage.getItem("userID");
 
+    // SEND HEAD HERE TO SEE IF THE CLIENT IS A VISITOR. OTHERWISE
+    // EVERYTIME THE WHOLE TUTORIAL IS GETTED FOR EVERY VISITOR.
+
     if (this.$route.params.page !== "join") {
       let resTut = await axios.get(
         "http://localhost:3000/tutorial/" + this.$route.params.id,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+            Authorization: `Bearer ${jwt_token}`,
             Wanted: "whole",
             Whats_my_scope: userID,
           },
@@ -360,19 +364,34 @@ export default {
         "http://localhost:3000/docs/" + this.tutorial._id,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+            Authorization: `Bearer ${jwt_token}`,
             Scope: this.getScope(),
           },
         }
       );
+
       this.docs = resDoc.data;
+
+      let resAnn = await axios.get(
+        "http://localhost:3000/announcement/" + this.tutorial._id,
+        {
+          headers: {
+            Authorization: `Bearer ${jwt_token}`,
+            Page: "summary",
+          },
+        }
+      );
+
+
+      this.announcements = resAnn.data;
+      
       this.loaded = true;
     } else {
       let resTut = await axios.get(
         "http://localhost:3000/tutorial/" + this.$route.params.id,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+            Authorization: `Bearer ${jwt_token}`,
             Wanted: "whole",
             Whats_my_scope: userID,
           },

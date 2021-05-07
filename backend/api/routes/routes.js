@@ -97,8 +97,8 @@ module.exports = (app, guard) => {  //Add guard to all get/post requests where t
   
   app
     .route('/announcement/:tutorialId')
-    .post(guard, announcementBuilder.create_an_announcement);
-  //   .get(guard, announcementBuilder.list_all_announcements)
+    .post(guard, announcementBuilder.create_an_announcement)
+    .get(guard, announcementBuilder.list_all_announcements);
   //   .put(guard, announcementBuilder.update_an_announcement)
   //   .delete(guard, announcementBuilder.delete_an_announcement);
 

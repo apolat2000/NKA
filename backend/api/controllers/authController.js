@@ -149,13 +149,13 @@ function sendForgotMail(jwt_token, user_email, name, res) {
     let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'nachhilfekleinanzeigen@gmail.com',
+            user: 'nkamailclient@gmail.com',
             pass: process.env.EMAIL_PASS
         }
     });
-    let html = `Hello, ${name}! <br> You requested to reset your password on Nachhilfe-Kleinanzeigen. Please follow this link to reset it: <a target="_blank" href="http://localhost:8080/#/reset/${jwt_token}">click here</a> <br> Please note that this link is only valid for the next 15 minutes. <br> Cheers, <br> Nachhilfe-Kleinanzeigen Team`
+    let html = `Hello, ${name}! <br> You requested to reset your password on Nachhilfe-Kleinanzeigen. Please follow this link to reset it: <a target="_blank" href="http://localhost:8080/reset/${jwt_token}">click here</a> <br> Please note that this link is only valid for the next 15 minutes. <br> Cheers, <br> Nachhilfe-Kleinanzeigen Team`
     let mailOptions = {
-        from: 'nachhilfekleinanzeigen@gmail.com',
+        from: 'nkamailclient@gmail.com',
         to: user_email,
         subject: 'Nachhilfe-Kleinanzeigen: You forgot your password',
         html
