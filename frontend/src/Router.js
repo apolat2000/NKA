@@ -1,5 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import Meta from 'vue-meta';
+
 import Tutorials from './views/Tutorials.vue';
 import Home from './views/Home.vue';
 import NewTutorial from './views/NewTutorial.vue';
@@ -17,8 +19,10 @@ import IsTutNotStud from './views/Entwurf/IsTutNotStud.vue';
 import NotTutNotStud from './views/Entwurf/NotTutNotStud.vue';
 import Forgot from './components/auth/Forgot.vue';
 import Reset from './components/auth/Reset.vue';
+import Explore from './views/Explore.vue';
 
 Vue.use(Router);
+Vue.use(Meta);
 
 export default new Router({
   mode: 'history',
@@ -29,12 +33,26 @@ export default new Router({
       path: '/',
       name: 'home',
       alias: '/home',
-      component: Home
+      component: Home,
+      metaInfo: {
+        title: 'NKA - Home'
+      }
     },
     {
       path: '/tutorials',
       name: 'tutorials',
-      component: Tutorials
+      component: Tutorials,
+      metaInfo: {
+        title: 'NKA - Tutorials'
+      }
+    },
+    {
+      path: '/explore-tutorials',
+      name: 'explore-tutorials',
+      component: Explore,
+      metaInfo: {
+        title: 'NKA - Explore'
+      }
     },
     {
       path: '/meeting',

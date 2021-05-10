@@ -1,5 +1,5 @@
 <template>
-  <i-container class="container _margin-x-0">
+  <i-container class="container _margin-x-0" fluid>
     <i-row top-xs class="_padding-1">
       <i-column xs="12" class="_height-100">
         <h1 class="_font-weight-bold">Your tutorship</h1>

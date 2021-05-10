@@ -10,10 +10,10 @@
     </i-navbar-brand>
     <i-navbar-items class="_justify-content-space-between">
       <i-nav v-if="isLoggedIn()">
-        <i-nav-item :to="{ name: 'new-tutorial' }">New Tutorial</i-nav-item>
-        <i-nav-item :to="{ name: 'tutorials' }">Find Tutorials</i-nav-item>
+        <i-nav-item :to="{ name: 'explore-tutorials' }">Explore</i-nav-item>
+        <i-nav-item :to="{ name: 'new-tutorial' }">Create</i-nav-item>
         <i-dropdown>
-          <i-button>Social</i-button>
+          <i-button>Draft</i-button>
           <i-dropdown-menu>
             <i-dropdown-item :to="{ name: 'socialIsTutorIsStud' }">
               IsTutIsStud
@@ -30,7 +30,7 @@
           </i-dropdown-menu>
         </i-dropdown>
 
-        <i-nav-item :to="{ name: 'lectures' }">Lectures</i-nav-item>
+        <i-nav-item :to="{ name: 'lectures' }">Socialize</i-nav-item>
         <i-nav-item :to="{ name: 'earn-coins' }">Earn Coins</i-nav-item>
       </i-nav>
       <i-nav class="_margin-left-auto">

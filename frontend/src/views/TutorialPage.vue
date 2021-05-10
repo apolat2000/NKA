@@ -87,7 +87,7 @@
           <div>
             <h3
               v-if="getScope() === 'student'"
-              @click="joinOrQuit(false)"
+              @click="showQuitAsk = true"
               :class="$route.params.page === 'feed' ? classChosen : classNot"
               style="cursor: pointer"
               class="_margin-top-2 _text-red"
@@ -142,14 +142,34 @@
           :scope="getScope()"
           class="m-4 mt-8"
         />
-        <announ 
-          v-if="this.$route.params.page === 'announcements' && this.tutorial._id"
+        <announ
+          v-if="
+            this.$route.params.page === 'announcements' && this.tutorial._id
+          "
           :tutorialId="tutorial._id"
           :isTutor="isTutor"
           :isStudent="isStudent"
           :scope="getScope()"
           class="m-4 mt-8"
         />
+        <i-modal
+          variant="warning"
+          v-model="showQuitAsk"
+        >
+          <template slot="header">Are you sure?</template>
+          When you quit a tutorial, you will lose access to the meeting, all private
+          documents, feed and announcements.
+          <template slot="footer">
+            <div class="_display-flex _justify-content-space-between">
+              <i-button variant="danger" @click="joinOrQuit(false)">
+                Quit
+              </i-button>
+              <i-button variant="success" @click="showQuitAsk = false">
+                Stay
+              </i-button>
+            </div>
+          </template>
+        </i-modal>
       </i-layout-content>
       <i-layout-content v-else>
         <h4>LOADING</h4>
@@ -172,7 +192,7 @@ export default {
     //TutPageSide,
     TutSum,
     Feed,
-    Announ
+    Announ,
     // TutPageLoading
   },
   data() {
@@ -188,6 +208,7 @@ export default {
       showSide: false,
       classNot: "",
       classChosen: "_text-primary",
+      showQuitAsk: false,
     };
   },
   methods: {
@@ -382,9 +403,8 @@ export default {
         }
       );
 
-
       this.announcements = resAnn.data;
-      
+
       this.loaded = true;
     } else {
       let resTut = await axios.get(
