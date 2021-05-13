@@ -50,13 +50,7 @@ const usersSchema = new Schema({
   friends: [{
     type: Schema.Types.ObjectId, ref: 'Users' //foreign keys
   }],
-  course_of_study:
-    [{
-      type: String,
-      required: [true, "Please specify at least one course of study."],
-      enum: ['Informatik B.Sc.', 'Maschinenbau B.Sc.', 'Elektrotechnik B.Sc.', 'Informatik M.Sc.']
-    }
-    ],
+  course_of_study: [{ type: Schema.Types.ObjectId, ref: 'CoursesOfStudy' }],
   credits: Number,
   creation_date: { type: Date, default: Date.now },
   // tutor_in: [
@@ -91,15 +85,17 @@ const lecturesSchema = new Schema({
   title: String,
   description: String,
   is_active: Boolean,
-  course_of_study:
-    [{
-      type: String,
-      required: "Please specify at least one course of study.",
-      enum: ['Informatik B.Sc.', 'Maschinenbau B.Sc.', 'Elektrotechnik B.Sc.', 'Informatik M.Sc.']
-    }
-    ]
+  course_of_study: [{ type: Schema.Types.ObjectId, ref: 'CoursesOfStudy' }]
 },
   { collection: "Lectures" }
+);
+
+const courseOfStudySchema = new Schema({
+  name: String,
+  verbose_name: String,
+  description: String
+},
+  { collection: "CoursesOfStudy" }
 );
 
 const discussionsSchema = new Schema({
