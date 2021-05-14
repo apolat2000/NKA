@@ -5,14 +5,27 @@ const User = mongoose.model('Users');
 // Access database from here, CRUD (Create, Read, Update, Delete) operations
 
 exports.list_all_tutorials = (req, res) => {
-  Tutorial.find({}).select('lecture title frequency tutor is_active').populate('lecture', 'title').populate('tutor', 'first_name last_name img_path').exec((err, tutorials) => {
-    if (err) {
-      res.send(err);
-    }
-    else {
-      res.json(tutorials);
-    }
-  });
+  if (!req.params.what) {
+    Tutorial.find({}).select('lecture title frequency tutor is_active').populate('lecture', 'title').populate('tutor', 'first_name last_name img_path').exec((err, tutorials) => {
+      if (err) {
+        res.send(err);
+      }
+      else {
+        res.json(tutorials);
+      }
+    });
+  } else if (req.params.what === "get-titles" && req.params.tutorialId) {
+    console.log(req.params.what);
+    console.log(req.params.tutorialId);
+    Tutorial.find({lecture: req.params.tutorialId}).select('title').exec((err, tutorials) => {
+      if (err) {
+        res.send(err);
+      }
+      else {
+        res.json(tutorials);
+      }
+    });
+  }
 };
 
 exports.create_a_tutorial = (req, res) => {

@@ -8,10 +8,8 @@
     >
       <i-textarea v-model="comment_content" :placeholder="place_holder" />
       <div class="_display-flex _justify-items-center">
-        {{ place_holder }}
-        {{ typ }}
         <i-select
-          @change="place_holder = (typ === 'ask' ? '🤔' : '🤓')"
+          @input="place_holder = (typ === 'ask' ? '🤔' : '🤓')"
           v-model="typ"
         >
           <i-select-option :value="'ask'" label="ask" />

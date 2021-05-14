@@ -63,7 +63,7 @@ const uploadDoc = multer({
 
 module.exports = (app, guard) => {  //Add guard to all get/post requests where the user has to be authenticated
   app
-    .route('/tutorials')
+    .route('/tutorials/:what/:tutorialId')
     .get(tutorialBuilder.list_all_tutorials)
     .post(tutorialBuilder.create_a_tutorial);
 
@@ -99,7 +99,7 @@ module.exports = (app, guard) => {  //Add guard to all get/post requests where t
 
   app
     .route('/course-of-study/:tutorialId')
-    .get(guard, courseOfStudyBulder.get_a_cos);
+    .get(guard, courseOfStudyBulder.read_a_cos);
 
   app
     .route('/announcement/:tutorialId')

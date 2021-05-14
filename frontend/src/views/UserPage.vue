@@ -26,8 +26,8 @@
             :tutor_in="profileObject.tutor_in"
             :isEditable="isEditable"
             v-on:clickedOnBioEdit="bioEdit = true"
-            v-on:clickedOnPp="$refs.pp.click()"
-            v-on:deletedPp="deletePpAction"
+            @clickedOnPp="$refs.pp.click()"
+            @deletedPp="deletePpAction"
           />
           <i-modal v-model="bioEdit">
             <template slot="header">Edit your bio</template>

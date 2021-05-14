@@ -131,5 +131,8 @@ const Lectures = mongoose.model('Lectures', lecturesSchema);
 const Discussions = mongoose.model('Discussions', discussionsSchema);
 const Docs = mongoose.model('Docs', docsSchema);
 const Announcements = mongoose.model('Announcements', announcementsSchema);
+const CoursesOfStudy = mongoose.model('CoursesOfStudy', courseOfStudySchema);
 
-module.exports = { Users, Tutorials, Lectures, Discussions, Docs, Announcements };
+module.exports = {
+  Users, Tutorials, Lectures, Discussions, Docs, Announcements, CoursesOfStudy
+};

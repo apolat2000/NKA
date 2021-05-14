@@ -25,7 +25,7 @@
         <form @submit.prevent="checkForm" method="POST">
           <i-form-group>
             <i-form-label>Lecture</i-form-label>
-            <i-select v-model="lecture" placeholder="Choose a lecture">
+            <i-select @input="$emit('getTitles', lecture); buttonValue = 'amk'" v-model="lecture" placeholder="Choose a lecture">
               <i-select-option
                 v-for="lec in lectures"
                 :key="lec.value"
@@ -37,7 +37,7 @@
 
           <i-form-group>
             <i-form-label>Title</i-form-label>
-            <i-input v-model="title" placeholder="A brief description." />
+            <i-input @input="$emit('updatedTitle', title);" v-model.trim="title" placeholder="A brief description." />
           </i-form-group>
 
           <i-form-group>
