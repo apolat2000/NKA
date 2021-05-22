@@ -8,19 +8,33 @@ const fs = require("fs");
 // Access database from here, CRUD (Create, Read, Update, Delete) operations
 
 exports.list_all_users = (req, res) => {
-  User.find({}, (err, users) => {
+
+  var query = User.find();
+
+  if (req.params.fields) {
+    const wantedFields = req.params.fields.replace(/-/g, ' ');
+    query.select(wantedFields + '-_id');
+  }
+
+  query.exec((err, users) => {
     if (err) {
       res.send(err);
+      return;
+    }
+    else if (!users) {
+      res.status(404).send();
+      return;
     }
     else {
       res.json(users);
     }
-  });
+  })
 };
 
 exports.create_a_user = async (req, res) => {
-  console.log(req.body);
-  console.log(req.file);
+
+  if (req.params.fields) { throw new Error('No fields expected.'); }
+
   var userFound = await findByEmailUsername(req.body.username, req.body.email);
   console.log("userFound = " + userFound);
   if (!userFound || userFound.length === 0) {
@@ -80,24 +94,37 @@ function findByEmailUsername(username, email) {
 
 exports.read_a_user = (req, res) => {
 
-  if (req.params.userId) {
-    var query = User.findById(req.params.userId);
+  if (req.params.id) {
+    var query = User.findById(req.params.id);
   }
   else res.send(err);
 
-  const wantedField = req.params.field;
+  if (req.params.fields) {
 
-  switch (wantedField) {
-    case 'courses_of_study':
-      query.populate(wantedField, 'verbose_name -_id');
-      query.select(wantedField + ' -_id');
-      break;
-    case 'lecture':
-      query.populate(wantedField, 'verbose_name');
-      break;
-    default:
-      query.populate(wantedField, 'title');
-      break;
+    const wantedFields = req.params.fields.replace(/-/g, ' ');
+
+    query.select(wantedFields + ' -_id');
+
+    if (!wantedFields.includes(' ')) {
+      //single field is wanted
+      if (wantedFields === 'courses_of_study' || wantedFields === 'lecture') {
+        query.populate(wantedFields, 'verbose_name'); //here can be changed
+      }
+    }
+    else {
+      //multiple fields are wanted
+      if (wantedFields.includes('courses_of_study')) {
+        query.populate('courses_of_study verbose_name'); //here can be changed
+      }
+      if (wantedFields.includes('lecture')) {
+        query.populate('lecture verbose_name'); //here can be changed
+      }
+    }
+
+  }
+  else {
+    query.populate('lecture', 'verbose_name');
+    query.populate('courses_of_study', 'verbose_name');
   }
 
   query.exec((err, user) => {
@@ -110,7 +137,6 @@ exports.read_a_user = (req, res) => {
       return;
     }
     else {
-      console.log(user);
       res.json(user);
     }
   })
@@ -119,7 +145,7 @@ exports.read_a_user = (req, res) => {
 
 exports.update_a_user = (req, res) => {
   var userInToken = req.user.userID;
-  User.findById(req.params.userId, (err, user) => {
+  User.findById(req.params.id, (err, user) => {
     if (err) {
       res.send(err);
       return;
@@ -159,7 +185,7 @@ exports.update_a_user = (req, res) => {
 
 exports.delete_a_user = (req, res) => {
   //var userInToken = req.user.userID;
-  User.findById(req.params.userId, (err, user) => {
+  User.findById(req.params.id, (err, user) => {
     if (err) {
       res.send(err);
       return;
@@ -182,12 +208,36 @@ exports.delete_a_user = (req, res) => {
         }
         res.json({
           message: 'user successfully deleted.',
-          _id: req.params.userId
+          _id: req.params.id
         });
       }
     });
   })
 };
+
+exports.search_users = (req, res) => {
+  
+  const query = req.params.query;
+
+  if (!query) { next(); }
+  else {
+    User.find({ $text: { $search: query } }).exec((err, users) => {
+      if (err) {
+        res.send(err);
+        return;
+      }
+      else if (!users) {
+        res.status(404).send();
+        return;
+      }
+      else {
+        console.log(users);
+        res.json(users);
+      }
+    })
+  }
+}
+
 
 function removeRefTut(userID) {
   Tutorial.find({ tutor: userID }, (err, tutorials) => {

@@ -306,7 +306,7 @@ export default {
         console.log(formData);
         try {
           let newUser = await axios.post(
-            "http://localhost:3000/users",
+            "http://localhost:3000/users/is-no-query/",
             formData
           );
           console.log("Account created");
@@ -320,7 +320,7 @@ export default {
           console.log(err);
         }
       }
-    },
-  },
+    }
+  }
 };
 </script>

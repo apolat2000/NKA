@@ -36,7 +36,7 @@
               {{ first_name }} {{ last_name }}
             </h1>
             <h4 class="_text-center _margin-y-0">@{{ username }}</h4>
-            <h6 style="margin-top: 5px;" class="_text-center">{{ courses_of_study[0] }}</h6>
+            <h6 v-for="cos in courses_of_study" :key="cos._id" style="margin-top: 5px;" class="_text-center">{{ cos.verbose_name }}</h6>
           </i-column>
         </i-row>
       </i-container>
@@ -53,12 +53,6 @@
 
       <i-list-group-item v-else>
         <p>{{ bio }}</p>
-      </i-list-group-item>
-
-      <i-list-group-item>
-        <p class="font-lato text-xl mb-1">
-          <b>Course of study:</b> {{ courses_of_study[0] }}
-        </p>
       </i-list-group-item>
 
       <i-list-group-item>

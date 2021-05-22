@@ -57,12 +57,6 @@ const usersSchema = new Schema({
   courses_of_study: [{ type: Schema.Types.ObjectId, ref: 'CoursesOfStudy' }],
   credits: Number,
   creation_date: { type: Date, default: Date.now },
-  // tutor_in: [
-  //   { type: Schema.Types.ObjectId, ref: 'Tutorials' } //foreign keys -- redundant because tutorID is saved in tutorial.tutor
-  // ],
-  // student_in: [
-  //   { type: Schema.Types.ObjectId, ref: 'Tutorials' } //foreign keys
-  // ],
   expert_of_lectures: [{ type: Schema.Types.ObjectId, ref: 'Lectures' }],
   img_path: { type: String, default: '' },
 },

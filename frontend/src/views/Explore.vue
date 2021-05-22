@@ -262,6 +262,7 @@ export default {
       userCoS: "",
       searching: false,
       cosEdit: false,
+      queryTextCoS: ""
     };
   },
   methods: {
@@ -282,6 +283,11 @@ export default {
         .catch((e) => {
           console.log(e);
         });
+    },
+    searchCoS() {
+      if (this.queryTextCoS.length >= 3) {
+        console.log('hey');
+      }
     },
     logout() {
       localStorage.clear();
@@ -325,7 +331,7 @@ export default {
     let result2 = await axios.get(
       "http://localhost:3000/user/" +
         localStorage.getItem("userID") +
-        "/courses_of_study"
+        "/courses_of_study-username"
     );
     if (result2.status === 200) {
       this.userCoS = result2.data.courses_of_study[0];

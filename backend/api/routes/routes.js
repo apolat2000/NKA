@@ -1,10 +1,11 @@
-const tutorialBuilder = require('../controllers/tutorialController');
-const discussionBuilder = require('../controllers/discussionController');
-const userBuilder = require('../controllers/userController');
-const lectureBuilder = require('../controllers/lectureController');
-const docBuilder = require('../controllers/docController')
 const auth = require('../controllers/authController');
-const announcementBuilder = require('../controllers/announcementController');
+
+const tutorialController = require('../controllers/tutorialController');
+const discussionController = require('../controllers/discussionController');
+const userController = require('../controllers/userController');
+const lectureController = require('../controllers/lectureController');
+const docController = require('../controllers/docController')
+const announcementController = require('../controllers/announcementController');
 const courseOfStudyBulder = require('../controllers/courseOfStudyController');
 const exploreController = require('../controllers/exploreController');
 
@@ -63,67 +64,92 @@ const uploadDoc = multer({
 });
 
 module.exports = (app, guard) => {  //Add guard to all get/post requests where the user has to be authenticated
+
+  app
+    .route('/user/:id/:fields*?')
+    .get(userController.read_a_user)
+    .put(guard, uploadPp.single('img'), userController.update_a_user)
+    .delete(userController.delete_a_user);
+
+  app
+    .route('/users/is-no-query/:fields*?')
+    .get(userController.list_all_users)
+    .post(uploadPp.single('img'), userController.create_a_user);
+
+  app
+    .route('/users/is-query/:query')
+    .get(userController.search_users);
+
+
+
+
+  app
+    .route('/tutorial/:id/:fields*?')
+    .get(tutorialController.read_a_tutorial)
+    .put(guard, uploadPp.single('img'), tutorialController.update_a_tutorial)
+    .delete(tutorialController.delete_a_tutorial);
+
+  app
+    .route('/tutorials/is-no-query/:fields*?')
+    .get(tutorialController.list_all_tutorials)
+    .post(uploadPp.single('img'), tutorialController.create_a_tutorial);
+
+  app
+    .route('/tutorials/is-query/:query')
+    .get(tutorialController.search_tutorials);
+
+
+    
   app
     .route('/tutorials/:what?/:tutorialId?')
-    .get(tutorialBuilder.list_all_tutorials)
-    .post(tutorialBuilder.create_a_tutorial);
+    .get(tutorialController.list_all_tutorials)
+    .post(tutorialController.create_a_tutorial);
 
   app
     .route('/tutorial/:tutorialId')
-    .get(guard, tutorialBuilder.read_a_tutorial) //gotta be guarded
-    .put(guard, tutorialBuilder.update_a_tutorial)
-    .delete(guard, tutorialBuilder.delete_a_tutorial);
-  
+    .get(guard, tutorialController.read_a_tutorial) //gotta be guarded
+    .put(guard, tutorialController.update_a_tutorial)
+    .delete(guard, tutorialController.delete_a_tutorial);
+
   app
     .route('/docs/:tutorialId')
-    .get(guard, docBuilder.list_all_docs)
-    .put(guard, uploadDoc.single('doc'), docBuilder.update_a_doc)
-    .post(guard, uploadDoc.single('doc'), docBuilder.create_a_doc);
-
-  app
-    .route('/users')
-    .get(userBuilder.list_all_users) //Would need extra permission setup for a superuser to list all other users
-    .post(uploadPp.single('img'), userBuilder.create_a_user);
-
-  app
-    .route('/user/:userId/:field*?')
-    .get(userBuilder.read_a_user)
-    .put(guard, uploadPp.single('img'), userBuilder.update_a_user)
-    .delete(userBuilder.delete_a_user);
+    .get(guard, docController.list_all_docs)
+    .put(guard, uploadDoc.single('doc'), docController.update_a_doc)
+    .post(guard, uploadDoc.single('doc'), docController.create_a_doc);
 
   app
     .route('/discussion/:tutorialId')
-    .post(guard, discussionBuilder.create_a_comment)
-    .get(guard, discussionBuilder.list_all_comments)
-    .put(guard, discussionBuilder.update_a_comment)
-    .delete(guard, discussionBuilder.delete_a_comment);
+    .post(guard, discussionController.create_a_comment)
+    .get(guard, discussionController.list_all_comments)
+    .put(guard, discussionController.update_a_comment)
+    .delete(guard, discussionController.delete_a_comment);
 
-  app
-    .route('/courses-of-study/:query')
-    .get(guard, courseOfStudyBulder.list_search_results);
+  // app
+  //   .route('/courses-of-study/:query')
+  //   .get(guard, courseOfStudyBulder.list_search_results);
 
   app
     .route('/announcement/:tutorialId')
-    .post(guard, announcementBuilder.create_an_announcement)
-    .get(guard, announcementBuilder.list_all_announcements);
-  //   .put(guard, announcementBuilder.update_an_announcement)
-  //   .delete(guard, announcementBuilder.delete_an_announcement);
+    .post(guard, announcementController.create_an_announcement)
+    .get(guard, announcementController.list_all_announcements);
+  //   .put(guard, announcementController.update_an_announcement)
+  //   .delete(guard, announcementController.delete_an_announcement);
 
   app
     .route('/lectures')
-    .get(lectureBuilder.list_all_lectures);
-  
+    .get(lectureController.list_all_lectures);
+
   app
     .route('/explore/search/:query/:cos')
     .get(exploreController.list_search_results);
-  
+
   // app
   //   .route('/explore/recommendations')
   //   .get(exploreController.recommend);
 
   app
     .route('/lecture/:lectureId')
-    .get(lectureBuilder.read_a_lecture)
+    .get(lectureController.read_a_lecture)
 
   app
     .route('/login')

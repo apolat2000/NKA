@@ -1,5 +1,11 @@
 <template>
-  <i-datatable :count-column="false" :columns="columns" :rows="rows" :footer="false" @tr-click="goToTutorial">
+  <i-datatable
+    :count-column="false"
+    :columns="columns"
+    :rows="rows"
+    :footer="false"
+    @tr-click="goToTutorial"
+  >
   </i-datatable>
 </template>
 
@@ -27,8 +33,9 @@ export default {
   },
   created() {
     axios
-      .get("http://localhost:3000/tutorials")
+      .get("http://localhost:3000/tutorials/is-no-query")
       .then((response) => {
+        console.log(response.data[0]);
         this.tutorials = response.data;
         this.listTuts();
       })
@@ -52,7 +59,7 @@ export default {
       }
     },
     goToTutorial: function (event, row, rowIndex) {
-      this.$router.push("/tutorials/"+this.rows[rowIndex].id+'/summary')
+      this.$router.push("/tutorials/" + this.rows[rowIndex].id + "/summary");
     },
     listTuts: function () {
       //this.tutorials.forEach(element => console.log(element.lecture._id));
