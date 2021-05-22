@@ -175,11 +175,9 @@ export default {
       } else {
         let tut = {
           class_size: this.classsize,
-          //tutor: local storage bilmen ne,
           tutor: localStorage.getItem("userID"),
           lecture: this.lecture,
           title: this.title,
-          creation_date: this.now(),
           students: [],
           first_date: this.firstdate,
           frequency: this.frequency,
@@ -213,8 +211,8 @@ export default {
     axios
       .get("http://localhost:3000/lectures")
       .then((response) => {
-        response.data.forEach((element) => {
-          this.lectures.push({ value: element._id, text: element.title });
+        response.data.forEach((lecture) => {
+          this.lectures.push({ value: lecture._id, text: lecture.verbose_name });
         });
       })
       .catch((e) => {

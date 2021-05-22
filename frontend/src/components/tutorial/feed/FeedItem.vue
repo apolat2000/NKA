@@ -9,7 +9,7 @@
         width="48"
         height="48"
         @click="$router.push(`/users/${comment.userId._id}`)"
-        class="rounded-full w-10 h-10 shadow-lg cursor-pointer"
+        class="rounded-full w-10 h-10 shadow-lg cursor-pointer _rounded-circle"
         :src="getImage()"
       />
       <div class="_display-flex flex-row _justify-content-space-between _width-100">

@@ -6,6 +6,7 @@ const docBuilder = require('../controllers/docController')
 const auth = require('../controllers/authController');
 const announcementBuilder = require('../controllers/announcementController');
 const courseOfStudyBulder = require('../controllers/courseOfStudyController');
+const exploreController = require('../controllers/exploreController');
 
 const multer = require('multer');
 
@@ -63,7 +64,7 @@ const uploadDoc = multer({
 
 module.exports = (app, guard) => {  //Add guard to all get/post requests where the user has to be authenticated
   app
-    .route('/tutorials/:what/:tutorialId')
+    .route('/tutorials/:what?/:tutorialId?')
     .get(tutorialBuilder.list_all_tutorials)
     .post(tutorialBuilder.create_a_tutorial);
 
@@ -85,7 +86,7 @@ module.exports = (app, guard) => {  //Add guard to all get/post requests where t
     .post(uploadPp.single('img'), userBuilder.create_a_user);
 
   app
-    .route('/user/:userId')
+    .route('/user/:userId/:field*?')
     .get(userBuilder.read_a_user)
     .put(guard, uploadPp.single('img'), userBuilder.update_a_user)
     .delete(userBuilder.delete_a_user);
@@ -98,8 +99,8 @@ module.exports = (app, guard) => {  //Add guard to all get/post requests where t
     .delete(guard, discussionBuilder.delete_a_comment);
 
   app
-    .route('/course-of-study/:tutorialId')
-    .get(guard, courseOfStudyBulder.read_a_cos);
+    .route('/courses-of-study/:query')
+    .get(guard, courseOfStudyBulder.list_search_results);
 
   app
     .route('/announcement/:tutorialId')
@@ -111,6 +112,14 @@ module.exports = (app, guard) => {  //Add guard to all get/post requests where t
   app
     .route('/lectures')
     .get(lectureBuilder.list_all_lectures);
+  
+  app
+    .route('/explore/search/:query/:cos')
+    .get(exploreController.list_search_results);
+  
+  // app
+  //   .route('/explore/recommendations')
+  //   .get(exploreController.recommend);
 
   app
     .route('/lecture/:lectureId')

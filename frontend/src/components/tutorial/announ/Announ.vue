@@ -1,91 +1,94 @@
 <template>
   <div>
-    <div v-if="isTutor">
-      {{ corpus }}
-      <i-alert dismissible :show="alertVisible" variant="warning">
-        <template slot="icon"><i-icon icon="warning"></i-icon></template>
-        <p>
-          Some quick example text to build on the alert title and make up the
-          bulk of the alert's content.
-        </p>
-      </i-alert>
-      <i-form
-        class="_margin-x-4 _diplay-flex _flex-direction-column _width-50"
-        @submit.prevent="handleSubmit"
-        accept-charset="UTF-8"
-        method="post"
-        v-model="textArea"
-      >
-        <i-form-group>
-          <i-textarea
-            :schema="textArea.input"
-            v-model="corpus"
-            placeholder="Share an announcement with your students."
-          />
-        </i-form-group>
-        <i-form-group>
-          <div class="_display-flex _justify-items-center">
-            <i-select v-model="variant">
-              <i-select-option :value="'USUAL'" label="Usual" />
-              <i-select-option :value="'INFO'" label="Info" />
-              <i-select-option :value="'WARNING'" label="Warning" />
-            </i-select>
-            <i-select v-model="importance">
-              <i-select-option :value="1" label="Kinda important" />
-              <i-select-option :value="2" label="Important" />
-              <i-select-option :value="3" label="Really important" />
-            </i-select>
-            <i-button
-              ><img style="height: 21px" src="../../../assets/lightning.png"
-            /></i-button>
+    <i-container fluid>
+      <i-row v-if="isTutor">
+        <i-column xs="12">
+          <div>
+            {{ corpus }}
+            <i-alert dismissible :show="alertVisible" variant="warning">
+              <template slot="icon"><i-icon icon="warning"></i-icon></template>
+              <p>
+                Some quick example text to build on the alert title and make up
+                the bulk of the alert's content.
+              </p>
+            </i-alert>
+            <i-form
+              class="_margin-x-4 _diplay-flex _flex-direction-column _width-50"
+              @submit.prevent="handleSubmit"
+              accept-charset="UTF-8"
+              method="post"
+              v-model="textArea"
+            >
+              <i-form-group>
+                <i-textarea
+                  :schema="textArea.input"
+                  v-model="corpus"
+                  placeholder="Share an announcement with your students."
+                />
+              </i-form-group>
+              <i-form-group>
+                <div class="_display-flex _justify-items-center">
+                  <i-select v-model="variant">
+                    <i-select-option :value="'USUAL'" label="Usual" />
+                    <i-select-option :value="'INFO'" label="Info" />
+                    <i-select-option :value="'WARNING'" label="Warning" />
+                  </i-select>
+                  <i-select v-model="importance">
+                    <i-select-option :value="1" label="Kinda important" />
+                    <i-select-option :value="2" label="Important" />
+                    <i-select-option :value="3" label="Really important" />
+                  </i-select>
+                  <i-button
+                    ><img
+                      style="height: 21px"
+                      src="../../../assets/lightning.png"
+                  /></i-button>
+                </div>
+              </i-form-group>
+            </i-form>
           </div>
-        </i-form-group>
-      </i-form>
-    </div>
-    <div
-      style="padding-left: 2.5px; padding-right: 2.5px"
-      class="_display-flex _justify-content-space-between"
-    >
-      <div
-        style="
-          margin-left: 2.5px;
-          margin-right: 2.5px;
-          margin-top: 5px;
-          margin-bottom: 5px;
-        "
-        class="_width-25"
-        v-for="ann in announcements"
-        :key="ann._id"
-      >
-        <i-card
-          :size="annSize(ann.importance)"
-          :variant="annVariant(ann.variant)"
+        </i-column>
+      </i-row>
+      <i-row v-for="anns in chunkedAnnouncements" :key="anns[0]._id">
+        <i-column
+          style="margin-top: 5px; margin-bottom: 5px"
+          xs="12"
+          md="6"
+          lg="4"
+          v-for="ann in anns"
+          :key="ann._id"
         >
-        <template slot="header">
+          <i-card
+            :size="annSize(ann.importance)"
+            :variant="annVariant(ann.variant)"
+          >
+            <template slot="header">
+              <p>
+                <i-icon
+                  :icon="
+                    ann.variant === 'WARNING'
+                      ? 'warning'
+                      : ann.variant === 'INFO'
+                      ? 'info'
+                      : 'envelope'
+                  "
+                />
+                {{ niceDate(ann.creation_date) }}
+              </p>
+            </template>
             <p>
-              <i-icon
-                :icon="
-                  ann.variant === 'WARNING'
-                    ? 'warning'
-                    : ann.variant === 'INFO'
-                    ? 'info'
-                    : 'envelope'
-                "
-              />
-              {{ niceDate(ann.creation_date) }}
+              {{ ann.corpus }}
             </p>
-          </template>
-          <p>
-            {{ ann.corpus }}
-          </p>
-        </i-card>
-      </div>
-    </div>
+          </i-card>
+        </i-column>
+      </i-row>
+    </i-container>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import chunk from "chunk";
 
 export default {
   props: {
@@ -110,6 +113,11 @@ export default {
         },
       }),
     };
+  },
+  computed: {
+    chunkedAnnouncements() {
+      return chunk(this.announcements, 3);
+    },
   },
   methods: {
     annVariant: function (text) {

@@ -14,7 +14,7 @@
         <i-navbar-items>
           <div class="_display-flex _flex-direction-column _margin-right-1">
             <h3 class="_margin-y-0 _text-uppercase">{{ tutorial.title }}</h3>
-            <h6 class="_margin-y-0">{{ tutorial.lecture.title }}</h6>
+            <h6 class="_margin-y-0">{{ tutorial.lecture.verbose_name }}</h6>
           </div>
           <i-badge
             class="_margin-right-1"

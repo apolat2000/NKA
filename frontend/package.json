@@ -12,6 +12,7 @@
     "@inkline/inkline": "^2.0.0",
     "@mycure/vue-jitsi-meet": "^0.0.7",
     "axios": "^0.21.1",
+    "chunk": "^0.0.3",
     "core-js": "^3.6.5",
     "jsonwebtoken": "^8.5.1",
     "semantic-ui-css": "^2.4.1",

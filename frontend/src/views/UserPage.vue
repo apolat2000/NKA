@@ -18,7 +18,7 @@
             :imgURI="imgURI"
             :first_name="profileObject.first_name"
             :last_name="profileObject.last_name"
-            :course_of_study="profileObject.course_of_study"
+            :courses_of_study="profileObject.courses_of_study"
             :expert_of_lectures="profileObject.expert_of_lectures"
             :bio="profileObject.bio"
             :username="profileObject.username"
@@ -66,7 +66,7 @@ export default {
   data() {
     return {
       profileObject: {
-        course_of_study: [],
+        courses_of_study: [],
         expert_of_lectures: [],
         bio: "",
         tutor_in: [],
@@ -123,12 +123,12 @@ export default {
       this.isEditable = false;
     }
 
-    let resultt = await axios.get("http://localhost:3000/user/" + routerId, {
+    let resultt = await axios.get("http://localhost:3000/user/" + routerId + '/', {
       headers: {
         Authorization: `Bearer ${jwt_token}`,
       },
     });
-    this.profileObject.course_of_study = resultt.data.course_of_study || [];
+    this.profileObject.courses_of_study = resultt.data.courses_of_study || [];
     this.profileObject.student_in = resultt.data.student_in;
     this.profileObject.expert_of_lectures =
       resultt.data.expert_of_lectures || [];

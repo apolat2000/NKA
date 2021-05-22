@@ -12,26 +12,8 @@
       <i-nav v-if="isLoggedIn()">
         <i-nav-item :to="{ name: 'explore-tutorials' }">Explore</i-nav-item>
         <i-nav-item :to="{ name: 'new-tutorial' }">Create</i-nav-item>
-        <i-dropdown>
-          <i-button>Draft</i-button>
-          <i-dropdown-menu>
-            <i-dropdown-item :to="{ name: 'socialIsTutorIsStud' }">
-              IsTutIsStud
-            </i-dropdown-item>
-            <i-dropdown-item :to="{ name: 'socialNotTutorIsStud' }">
-              NotTutIsStud
-            </i-dropdown-item>
-            <i-dropdown-item :to="{ name: 'socialIsTutorNotStud' }">
-              IsTutNotStud
-            </i-dropdown-item>
-            <i-dropdown-item :to="{ name: 'socialNotTutorNotStud' }">
-              NotTutNotStud
-            </i-dropdown-item>
-          </i-dropdown-menu>
-        </i-dropdown>
-
         <i-nav-item :to="{ name: 'lectures' }">Socialize</i-nav-item>
-        <i-nav-item :to="{ name: 'earn-coins' }">Earn Coins</i-nav-item>
+        <!-- <i-nav-item :to="{ name: 'earn-coins' }">Earn Coins</i-nav-item> -->
       </i-nav>
       <i-nav class="_margin-left-auto">
         <i-dropdown v-if="isLoggedIn()" placement="bottom-end">
@@ -47,6 +29,18 @@
             <i-dropdown-item href="" disabled
               >Something disabled here</i-dropdown-item
             >
+            <i-dropdown-item :to="{ name: 'socialIsTutorIsStud' }">
+              IsTutIsStud
+            </i-dropdown-item>
+            <i-dropdown-item :to="{ name: 'socialNotTutorIsStud' }">
+              NotTutIsStud
+            </i-dropdown-item>
+            <i-dropdown-item :to="{ name: 'socialIsTutorNotStud' }">
+              IsTutNotStud
+            </i-dropdown-item>
+            <i-dropdown-item :to="{ name: 'socialNotTutorNotStud' }">
+              NotTutNotStud
+            </i-dropdown-item>
             <i-dropdown-divider />
             <i-dropdown-item @click="logout">Logout</i-dropdown-item>
           </i-dropdown-menu>

@@ -64,29 +64,31 @@ export default {
       this.grabComments();
     },
     handleSubmit: async function postComment() {
-      try {
-        let comment = {
-          value: this.comment_content,
-          userId: localStorage.getItem("userID"),
-          isAsk: this.typ === "ask" ? true : false,
-          visibility: this.to,
-        };
-        console.log(comment);
-        var res = await axios.post(
-          "http://localhost:3000/discussion/" + this.tutorialId,
-          comment,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
-            },
+      if (this.comment_content !== "") {
+        try {
+          let comment = {
+            value: this.comment_content,
+            userId: localStorage.getItem("userID"),
+            isAsk: this.typ === "ask" ? true : false,
+            visibility: this.to,
+          };
+          console.log(comment);
+          var res = await axios.post(
+            "http://localhost:3000/discussion/" + this.tutorialId,
+            comment,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+              },
+            }
+          );
+          if (res.status === 200) {
+            this.grabComments();
+            this.comment_content = "";
           }
-        );
-        if (res.status === 200) {
-          this.grabComments();
-          this.comment_content = "";
+        } catch (err) {
+          alert("An error occured: ", err);
         }
-      } catch (err) {
-        alert("An error occured: ", err);
       }
       return false;
     },

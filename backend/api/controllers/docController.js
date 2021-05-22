@@ -3,7 +3,7 @@ const Tutorial = mongoose.model('Tutorials');
 const Doc = mongoose.model('Docs');
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const fs = require("fs")
+const fs = require("fs");
 
 exports.create_a_doc = async (req, res) => {
 

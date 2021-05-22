@@ -11,7 +11,7 @@ const tutorialsSchema = new Schema(
 
     tutor: { type: Schema.Types.ObjectId, ref: "Users" }, //foreign key
     students: [
-      { type: Schema.Types.ObjectId, ref: "Users" }, //foreign keys -- redundant because tutorial IDs are saved in user.student_in
+      { type: Schema.Types.ObjectId, ref: "Users" }, //foreign keys
     ],
 
     lecture: { type: Schema.Types.ObjectId, ref: "Lectures" }, //foreign key
@@ -28,6 +28,10 @@ const tutorialsSchema = new Schema(
   },
   { collection: "Tutorials" }
 );
+tutorialsSchema.index({
+  title: 'text',
+  description: 'text'
+})
 
 const usersSchema = new Schema({
   first_name: String,
@@ -50,7 +54,7 @@ const usersSchema = new Schema({
   friends: [{
     type: Schema.Types.ObjectId, ref: 'Users' //foreign keys
   }],
-  course_of_study: [{ type: Schema.Types.ObjectId, ref: 'CoursesOfStudy' }],
+  courses_of_study: [{ type: Schema.Types.ObjectId, ref: 'CoursesOfStudy' }],
   credits: Number,
   creation_date: { type: Date, default: Date.now },
   // tutor_in: [
@@ -64,6 +68,12 @@ const usersSchema = new Schema({
 },
   { collection: "Users" }
 );
+usersSchema.index({
+  first_name: 'text',
+  last_name: 'text',
+  username: 'text',
+  email: 'text',
+});
 
 const docsSchema = new Schema({
   title: String,
@@ -80,15 +90,23 @@ const docsSchema = new Schema({
 },
   { collection: "Docs" }
 );
+docsSchema.index({
+  title: 'text'
+});
 
 const lecturesSchema = new Schema({
-  title: String,
+  verbose_name: String,
+  name: String,
   description: String,
   is_active: Boolean,
-  course_of_study: [{ type: Schema.Types.ObjectId, ref: 'CoursesOfStudy' }]
+  courses_of_study: [{ type: Schema.Types.ObjectId, ref: 'CoursesOfStudy' }]
 },
   { collection: "Lectures" }
 );
+lecturesSchema.index({
+  verbose_name: 'text',
+  name: 'text'
+});
 
 const courseOfStudySchema = new Schema({
   name: String,
@@ -97,6 +115,10 @@ const courseOfStudySchema = new Schema({
 },
   { collection: "CoursesOfStudy" }
 );
+courseOfStudySchema.index({
+  name: 'text',
+  verbose_name: 'text'
+});
 
 const discussionsSchema = new Schema({
   value: String,
@@ -119,7 +141,10 @@ const announcementsSchema = new Schema({
     type: String,
     enum: ['WARNING', 'INFO', 'USUAL']
   },
-  importance: Number, //1 === 'KINDA, 2 === 'IMPORTANT', 3 === 'REALLY'
+  importance: { //1 === 'KINDA, 2 === 'IMPORTANT', 3 === 'REALLY'
+    type: Number,
+    enum: [1,2,3]
+  },
   tutorialId: { type: Schema.Types.ObjectId, ref: "Tutorials" } //foreign key
 },
   { collection: "Announcements" }

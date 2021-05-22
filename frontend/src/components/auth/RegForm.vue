@@ -233,10 +233,7 @@ export default {
       lectures: [],
       image: "",
       studies: [
-        "Informatik B.Sc.",
-        "Maschinenbau B.Sc.",
-        "Elektrotechnik B.Sc.",
-        "Informatik M.Sc.",
+        "60a2ea2699da64be41a8676a"
       ],
       alertMessage: "",
     };
@@ -247,10 +244,10 @@ export default {
       this.$router.push("/");
     } else {
       axios.get("http://localhost:3000/lectures").then((res) => {
-        res.data.forEach((x) =>
-          this.lectures.push({ value: x._id, text: x.title })
+        res.data.forEach((lec) =>
+          this.lectures.push({ value: lec._id, text: lec.verbose_name })
         );
-        res.data.forEach((x) => console.log(x._id));
+        res.data.forEach((lec) => console.log(lec._id));
       });
     }
   },
@@ -299,7 +296,7 @@ export default {
           username: this.username,
           email: this.email,
           password: this.password,
-          course_of_study: [this.slctCoS],
+          courses_of_study: [this.slctCoS],
           expert_of_lectures: [this.slctLec],
           img: this.image ? this.image : "",
           bio: "",

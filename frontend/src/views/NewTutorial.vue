@@ -2,15 +2,16 @@
   <div id="new-tutorial" class="_margin-top-1">
     <div>
     <h1 class="_text-center">Create New Tutorial</h1>
-    <!-- <ul>
-      <li :key="tut.similarity" v-for="tut in titleSimilarityArray">
-        {{ tut.title }} {{tut.similarity }}
+    <ul>
+      <li :key="tut.rating" v-for="tut in titleSimilarityArray">
+        {{ tut.target }} {{tut.rating }}
       </li>
-    </ul> -->
-    {{ titleSimilarityArray }}
+    </ul>
     <tut-form @updatedTitle="updateSimilarityList" @getTitles="onGetTitles" :tutorial="tutorial" />
-    {{ titlesOfOtherTutorials }}
     </div>
+    {{ titlesOfOtherTutorials }}
+    {{ titleSimilarityArray }}
+    <i-button @click="sim"></i-button>
   </div>
 </template>
 
@@ -25,19 +26,22 @@ export default {
   data() {
     return {
       tutorial: {
-        title: "LinA Klausur 1. Termin",
+        title: "",
         description:
-          "Linear algebra is the branch of mathematics concerning linear equations and linear maps and their representations in vector spaces and through matrices.",
-        frequency: "WEEKLY",
-        firstDate: "05.05.2021, 18:00.",
-        classSize: 5,
-        lecture: "Linear Algebra",
+          "",
+        frequency: "",
+        firstDate: "",
+        classSize: 1,
+        lecture: "",
       },
       titlesOfOtherTutorials: [],
       titleSimilarityArray: []
     };
   },
   methods: {
+    sim() {
+      console.log(strsim.compareTwoStrings('Ahmet Polat','Achmed')); 
+    },
     logout() {
       localStorage.clear();
       this.$router.push("/login");
@@ -51,16 +55,17 @@ export default {
       console.log(strsim.compareTwoStrings(str1, str2));
     },
     updateSimilarityList(newTitle) {
-      console.log('called');
       if(this.titlesOfOtherTutorials.length !== 0) {
 
-        let tempArray = [];
+        this.titleSimilarityArray = strsim.findBestMatch(newTitle, this.titlesOfOtherTutorials.map(a => a.title)).ratings.sort(function(a, b) {a.rating - b.rating}).slice(0,5)
 
-        this.titlesOfOtherTutorials.forEach(e => {
-          tempArray.push({similarity: strsim.compareTwoStrings(e.title, newTitle), title: e.title, _id: e._id})
-        });
+        // let tempArray = [];
 
-        this.titleSimilarityArray = tempArray.filter(x => x.similarity > 0.1)
+        // this.titlesOfOtherTutorials.forEach(e => {
+        //   tempArray.push({similarity: strsim.compareTwoStrings(e.title, newTitle), title: e.title, _id: e._id})
+        // });
+
+        // this.titleSimilarityArray = tempArray.filter(x => x.similarity > 0.1)
 
       }
     },

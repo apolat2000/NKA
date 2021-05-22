@@ -58,7 +58,7 @@ export default {
       //this.tutorials.forEach(element => console.log(element.lecture._id));
       for (var i = 0; i < this.tutorials.length; i++) {
         this.rows.push({
-          lecture: this.tutorials[i].lecture.title,
+          lecture: this.tutorials[i].lecture.verbose_name,
           title: this.tutorials[i].title,
           scheduling: this.tutorials[i].frequency,
           tutor: this.tutorials[i].tutor,

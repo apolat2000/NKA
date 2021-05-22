@@ -4,7 +4,7 @@
       <div class="flex items-center">
         <div>
           <div id="lecture" class="text-sm font-medium text-gray-900">
-            {{ tutorial.lecture.title }}
+            {{ tutorial.lecture.verbose_name }}
           </div>
           <div class="text-sm text-gray-500">
             Subtitle

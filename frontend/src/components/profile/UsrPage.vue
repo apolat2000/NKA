@@ -12,9 +12,9 @@
               <img
                 :src="imgURI"
                 alt="An error occured!"
-                class="_border _rounded-circle _width-100"
+                class="_border _rounded-circle"
                 @click="tellViewClickedOnPp"
-                style="cursor: pointer"
+                style="cursor: pointer; width:150px; height:150px;"
               />
               <template slot="body"
                 >Click to edit your profile picture.</template
@@ -36,7 +36,7 @@
               {{ first_name }} {{ last_name }}
             </h1>
             <h4 class="_text-center _margin-y-0">@{{ username }}</h4>
-            <h6 style="margin-top: 5px;" class="_text-center">{{ course_of_study[0] }}</h6>
+            <h6 style="margin-top: 5px;" class="_text-center">{{ courses_of_study[0] }}</h6>
           </i-column>
         </i-row>
       </i-container>
@@ -57,7 +57,7 @@
 
       <i-list-group-item>
         <p class="font-lato text-xl mb-1">
-          <b>Course of study:</b> {{ course_of_study[0] }}
+          <b>Course of study:</b> {{ courses_of_study[0] }}
         </p>
       </i-list-group-item>
 
@@ -94,7 +94,7 @@ export default {
     first_name: String,
     last_name: String,
     expert_of_lectures: Array,
-    course_of_study: Array,
+    courses_of_study: Array,
     student_in: Array,
     username: String,
     imgURI: {
@@ -123,7 +123,7 @@ export default {
     expertToString: function (expert_of_lectures) {
       var returnStr = "";
       expert_of_lectures.forEach((lec) => {
-        returnStr += returnStr + lec.title + ", ";
+        returnStr += returnStr + lec.verbose_name + ", ";
       });
       returnStr = returnStr.slice(0, -2) + ".";
 

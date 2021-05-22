@@ -36,7 +36,7 @@ exports.create_a_user = async (req, res) => {
       last_name: req.body.last_name,
       username: req.body.username,
       password: hashedPassword,
-      course_of_study: req.body.course_of_study,
+      courses_of_study: req.body.courses_of_study,
       salt: userSalt,
       email: req.body.email,
       credits: 0,
@@ -66,11 +66,11 @@ exports.create_a_user = async (req, res) => {
           message: "An error occured!",
           error: error.message
         })
-        if(req.file) fs.unlink(req.file.path, ()=>{})
+        if (req.file) fs.unlink(req.file.path, () => { })
       })
   } else {
     res.status(400).send();
-    if(req.file) fs.unlink(req.file.path, ()=>{})
+    if (req.file) fs.unlink(req.file.path, () => { })
   }
 };
 
@@ -79,8 +79,28 @@ function findByEmailUsername(username, email) {
 }
 
 exports.read_a_user = (req, res) => {
-  //var userInToken = req.user.userID;
-  User.findById(req.params.userId).populate('expert_of_lectures', 'title').populate('student_in', 'title').populate('tutor_in', 'title').exec((err, user) => {
+
+  if (req.params.userId) {
+    var query = User.findById(req.params.userId);
+  }
+  else res.send(err);
+
+  const wantedField = req.params.field;
+
+  switch (wantedField) {
+    case 'courses_of_study':
+      query.populate(wantedField, 'verbose_name -_id');
+      query.select(wantedField + ' -_id');
+      break;
+    case 'lecture':
+      query.populate(wantedField, 'verbose_name');
+      break;
+    default:
+      query.populate(wantedField, 'title');
+      break;
+  }
+
+  query.exec((err, user) => {
     if (err) {
       res.send(err);
       return;
@@ -89,14 +109,12 @@ exports.read_a_user = (req, res) => {
       res.status(404).send();
       return;
     }
-    // else if (user._id != userInToken) {
-    //   res.status(401).send({ message: "Unauthorized access" })
-    //   return;
-    // }
-    else{
+    else {
+      console.log(user);
       res.json(user);
-    } 
-  });
+    }
+  })
+
 };
 
 exports.update_a_user = (req, res) => {
@@ -114,18 +132,18 @@ exports.update_a_user = (req, res) => {
       res.status(401).send({ message: "Unauthorized access" })
       return;
     }
-    if(req.file) req.body.img_path = req.file.path;
+    if (req.file) req.body.img_path = req.file.path;
     console.log(req.file);
-    req.body.expert_of_lectures ?  req.body.expert_of_lectures = req.body.expert_of_lectures.split(',') : [];
-    if(req.body.password){
+    req.body.expert_of_lectures ? req.body.expert_of_lectures = req.body.expert_of_lectures.split(',') : [];
+    if (req.body.password) {
       let salt = bcrypt.genSaltSync(10);
       let password = bcrypt.hashSync(req.body.password, salt);
       req.body.salt = salt;
       req.body.password = password;
     }
-    if(req.file) req.body.img_path = req.file.path;
-    if(req.body.img_path === '') { //Remove PP
-      fs.unlink(user.img_path, ()=>{})
+    if (req.file) req.body.img_path = req.file.path;
+    if (req.body.img_path === '') { //Remove PP
+      fs.unlink(user.img_path, () => { })
     }
     User.findOneAndUpdate(
       { _id: user._id },
