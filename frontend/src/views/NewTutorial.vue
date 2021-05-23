@@ -9,9 +9,6 @@
     </ul>
     <tut-form @updatedTitle="updateSimilarityList" @getTitles="onGetTitles" :tutorial="tutorial" />
     </div>
-    {{ titlesOfOtherTutorials }}
-    {{ titleSimilarityArray }}
-    <i-button @click="sim"></i-button>
   </div>
 </template>
 

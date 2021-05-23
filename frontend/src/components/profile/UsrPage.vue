@@ -14,7 +14,7 @@
                 alt="An error occured!"
                 class="_border _rounded-circle"
                 @click="tellViewClickedOnPp"
-                style="cursor: pointer; width:150px; height:150px;"
+                style="cursor: pointer; width: 150px; height: 150px"
               />
               <template slot="body"
                 >Click to edit your profile picture.</template
@@ -36,7 +36,14 @@
               {{ first_name }} {{ last_name }}
             </h1>
             <h4 class="_text-center _margin-y-0">@{{ username }}</h4>
-            <h6 v-for="cos in courses_of_study" :key="cos._id" style="margin-top: 5px;" class="_text-center">{{ cos.verbose_name }}</h6>
+            <h6
+              v-for="cos in courses_of_study"
+              :key="cos._id"
+              style="margin-top: 5px"
+              class="_text-center"
+            >
+              {{ cos.verbose_name }}
+            </h6>
           </i-column>
         </i-row>
       </i-container>

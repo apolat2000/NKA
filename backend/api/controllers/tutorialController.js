@@ -4,26 +4,63 @@ const User = mongoose.model('Users');
 
 // Access database from here, CRUD (Create, Read, Update, Delete) operations
 
+exports.client_scope = (req, res) => {
+
+  const userInToken = req.user.userID;
+  const tutId = req.params.id;
+  let header = "";
+
+  console.log(userInToken);
+  console.log(tutId);
+
+  if (tutId) {
+    Tutorial.findOne({ _id: tutId }).exec((err, tut) => {
+      if (err) {
+        res.send(err);
+        return;
+      }
+      console.log(tut);
+      if (tut.tutor === userInToken) {
+        console.log(res.headersSent) // false
+        header = 'tutor';
+      }
+      else if (tut.students.includes(userInToken)) {
+        header = 'student';
+      }
+      else {
+        header = 'visitor';
+      }
+      console.log(header);
+      res.setHeader('Client_Scope', header);
+      res.end();
+    });
+  }
+
+}
+
 exports.list_all_tutorials = (req, res) => {
   var query = Tutorial.find();
 
   if (req.params.fields) {
     const wantedFields = req.params.fields.replace(/-/g, ' ');
-    query.select(wantedFields + '-_id');
+    query.select(wantedFields + ' -_id');
+  }
+  else {
+    query.populate('lecture', ['name', 'verbose_name']);
+    query.populate('tutor', ['first_name', 'last_name', 'username', 'bio', 'img_path']);
   }
 
-  query.exec((err, users) => {
+  query.exec((err, tutorials) => {
     if (err) {
       res.send(err);
       return;
     }
-    else if (!users) {
+    else if (!tutorials) {
       res.status(404).send();
       return;
     }
     else {
-      console.log(users);
-      res.json(users);
+      res.json(tutorials);
     }
   })
 };
@@ -88,22 +125,21 @@ exports.read_a_tutorial = (req, res) => {
   }
   else {
     query.populate('lecture', 'verbose_name');
-    query.populate('tutor', 'nickname');
+    query.populate('tutor', ['first_name', 'last_name', 'username', 'bio', 'img_path']);
     query.populate('students username');
   }
 
-  query.exec((err, user) => {
+  query.exec((err, tutorial) => {
     if (err) {
       res.send(err);
       return;
     }
-    else if (!user) {
+    else if (!tutorial) {
       res.status(404).send();
       return;
     }
     else {
-      console.log(user);
-      res.json(user);
+      res.json(tutorial);
     }
   })
 
@@ -260,7 +296,7 @@ exports.delete_a_tutorial = (req, res) => {
 };
 
 exports.search_tutorials = (req, res) => {
-  
+
   const query = req.params.query;
 
   if (!query) { next(); }

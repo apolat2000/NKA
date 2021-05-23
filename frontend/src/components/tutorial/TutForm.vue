@@ -187,7 +187,7 @@ export default {
         };
         console.log(tut);
         axios
-          .post(`http://localhost:3000/tutorials`, tut)
+          .post(`http://localhost:3000/tutorials/is-no-query`, tut)
           .then((response) => {
             console.log(response.data);
             this.$router.push({
@@ -209,8 +209,9 @@ export default {
     }
 
     axios
-      .get("http://localhost:3000/lectures")
+      .get("http://localhost:3000/lectures/is-no-query")
       .then((response) => {
+        console.log(response.data);
         response.data.forEach((lecture) => {
           this.lectures.push({ value: lecture._id, text: lecture.verbose_name });
         });

@@ -139,6 +139,8 @@ export default {
     this.profileObject.bio = resultt.data.bio || "Your bio is empty.";
     this.profileObject.tutor_in = resultt.data.tutor_in || [];
 
+    console.log(resultt.data);
+
     if (this.profileObject.img_path !== "") {
       if (this.profileObject.img_path.length > 0) {
         let imageResult = await axios.head(

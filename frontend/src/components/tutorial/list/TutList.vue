@@ -62,10 +62,9 @@ export default {
       this.$router.push("/tutorials/" + this.rows[rowIndex].id + "/summary");
     },
     listTuts: function () {
-      //this.tutorials.forEach(element => console.log(element.lecture._id));
       for (var i = 0; i < this.tutorials.length; i++) {
         this.rows.push({
-          lecture: this.tutorials[i].lecture.verbose_name,
+          lecture: this.tutorials[i].lecture,
           title: this.tutorials[i].title,
           scheduling: this.tutorials[i].frequency,
           tutor: this.tutorials[i].tutor,

@@ -85,31 +85,26 @@ module.exports = (app, guard) => {  //Add guard to all get/post requests where t
 
   app
     .route('/tutorial/:id/:fields*?')
-    .get(tutorialController.read_a_tutorial)
+    .get(guard, tutorialController.read_a_tutorial)
+    .head(guard, tutorialController.client_scope)
     .put(guard, uploadPp.single('img'), tutorialController.update_a_tutorial)
     .delete(tutorialController.delete_a_tutorial);
 
   app
     .route('/tutorials/is-no-query/:fields*?')
-    .get(tutorialController.list_all_tutorials)
-    .post(uploadPp.single('img'), tutorialController.create_a_tutorial);
+    .get(guard, tutorialController.list_all_tutorials)
+    .post(guard, uploadPp.single('img'), tutorialController.create_a_tutorial);
 
   app
     .route('/tutorials/is-query/:query')
-    .get(tutorialController.search_tutorials);
+    .get(guard, tutorialController.search_tutorials);
 
-
-    
-  app
-    .route('/tutorials/:what?/:tutorialId?')
-    .get(tutorialController.list_all_tutorials)
-    .post(tutorialController.create_a_tutorial);
 
   app
-    .route('/tutorial/:tutorialId')
-    .get(guard, tutorialController.read_a_tutorial) //gotta be guarded
-    .put(guard, tutorialController.update_a_tutorial)
-    .delete(guard, tutorialController.delete_a_tutorial);
+    .route('/courses-of-study/is-no-query/:fields*?')
+    .get(guard, courseOfStudyBulder.list_all_cos);
+
+
 
   app
     .route('/docs/:tutorialId')
@@ -136,7 +131,7 @@ module.exports = (app, guard) => {  //Add guard to all get/post requests where t
   //   .delete(guard, announcementController.delete_an_announcement);
 
   app
-    .route('/lectures')
+    .route('/lectures/is-no-query/:fields*?')
     .get(lectureController.list_all_lectures);
 
   app

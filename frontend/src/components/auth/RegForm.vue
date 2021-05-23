@@ -243,7 +243,7 @@ export default {
     if (localStorage.getItem("jwt_token") !== null) {
       this.$router.push("/");
     } else {
-      axios.get("http://localhost:3000/lectures").then((res) => {
+      axios.get("http://localhost:3000/lectures/is-no-query").then((res) => {
         res.data.forEach((lec) =>
           this.lectures.push({ value: lec._id, text: lec.verbose_name })
         );

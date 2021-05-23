@@ -6,7 +6,7 @@
           <h1 class="_font-weight-bold">Search in</h1>
           <i-tooltip placement="bottom" trigger="hover">
             <i-button
-              @click="cosEdit = true"
+              @click="changeSearchedCoS(true)"
               style="margin-left: 1ch"
               class="_padding-0"
               ><h1>{{ userCoS.verbose_name }}</h1></i-button
@@ -227,16 +227,17 @@
             class="_width-100"
             v-model="queryTextCoS"
             :placeholder="userCoS.verbose_name + '..'"
+            @input="searchCoS(queryTextCoS)"
           >
-            <i slot="prefix" @change="searchCoS()"
-              ><i-icon style="cursor: pointer" icon="search"
-            /></i>
+            <i slot="prefix">
+              <i-icon style="cursor: pointer" icon="search" />
+            </i>
           </i-input>
         </i-form-group>
         <i-form-group class="_display-flex _justify-content-space-between">
-          <i-button type="submit" variant="success" @click="bioAction(true)"
-            >Save</i-button
-          >
+          <i-button type="submit" variant="success" @click="bioAction(true)">
+            Save
+          </i-button>
           <!-- <i-button variant="danger" @click="bioAction(false)"
             >Discard</i-button
           > -->
@@ -262,7 +263,8 @@ export default {
       userCoS: "",
       searching: false,
       cosEdit: false,
-      queryTextCoS: ""
+      queryTextCoS: "",
+      allCoS: []
     };
   },
   methods: {
@@ -284,9 +286,20 @@ export default {
           console.log(e);
         });
     },
-    searchCoS() {
-      if (this.queryTextCoS.length >= 3) {
-        console.log('hey');
+    searchCoS(text) {
+      if (text.length >= 3) {
+        console.log("hey");
+      }
+    },
+    async changeSearchedCoS(show) {
+      let result = await axios.get(
+        "http://localhost:3000/courses-of-study/is-no-query/verbose_name"
+      );
+      if (result.status === 200) {
+        this.allCoS = result.data;
+        show ? (this.cosEdit = true) : (this.cosEdit = false);
+      } else {
+        console.log(result.status);
       }
     },
     logout() {

@@ -30,7 +30,9 @@
         <i-navbar-items class="_justify-content-end _margin-right-1">
           <p>
             {{ tutorial.students.length }}/{{ tutorial.class_size }}
-            <span><i class="users icon"></i></span>
+            <span>
+              <i class="users icon"></i>
+            </span>
           </p>
         </i-navbar-items>
       </i-navbar>
@@ -152,13 +154,10 @@
           :scope="getScope()"
           class="m-4 mt-8"
         />
-        <i-modal
-          variant="warning"
-          v-model="showQuitAsk"
-        >
+        <i-modal variant="warning" v-model="showQuitAsk">
           <template slot="header">Are you sure?</template>
-          When you quit a tutorial, you will lose access to the meeting, all private
-          documents, feed and announcements.
+          When you quit a tutorial, you will lose access to the meeting, all
+          private documents, feed and announcements.
           <template slot="footer">
             <div class="_display-flex _justify-content-space-between">
               <i-button variant="danger" @click="joinOrQuit(false)">
@@ -340,19 +339,12 @@ export default {
       this.logout();
     }
 
-    const userID = localStorage.getItem("userID");
-
-    // SEND HEAD HERE TO SEE IF THE CLIENT IS A VISITOR. OTHERWISE
-    // EVERYTIME THE WHOLE TUTORIAL IS GETTED FOR EVERY VISITOR.
-
     if (this.$route.params.page !== "join") {
-      let resTut = await axios.get(
+      let resTut = await axios.head(
         "http://localhost:3000/tutorial/" + this.$route.params.id,
         {
           headers: {
             Authorization: `Bearer ${jwt_token}`,
-            Wanted: "whole",
-            Whats_my_scope: userID,
           },
         }
       );
@@ -407,13 +399,11 @@ export default {
 
       this.loaded = true;
     } else {
-      let resTut = await axios.get(
+      let resTut = await axios.head(
         "http://localhost:3000/tutorial/" + this.$route.params.id,
         {
           headers: {
             Authorization: `Bearer ${jwt_token}`,
-            Wanted: "whole",
-            Whats_my_scope: userID,
           },
         }
       );

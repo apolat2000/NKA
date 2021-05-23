@@ -13,7 +13,7 @@ exports.list_all_users = (req, res) => {
 
   if (req.params.fields) {
     const wantedFields = req.params.fields.replace(/-/g, ' ');
-    query.select(wantedFields + '-_id');
+    query.select(wantedFields + ' -_id');
   }
 
   query.exec((err, users) => {
@@ -107,24 +107,24 @@ exports.read_a_user = (req, res) => {
 
     if (!wantedFields.includes(' ')) {
       //single field is wanted
-      if (wantedFields === 'courses_of_study' || wantedFields === 'lecture') {
-        query.populate(wantedFields, 'verbose_name'); //here can be changed
+      if (wantedFields === 'courses_of_study' || wantedFields === 'expert_of_lectures') {
+        query.populate(wantedFields, ['verbose_name']); //here can be changed
       }
     }
     else {
       //multiple fields are wanted
       if (wantedFields.includes('courses_of_study')) {
-        query.populate('courses_of_study verbose_name'); //here can be changed
+        query.populate('courses_of_study', ['verbose_name']);
       }
-      if (wantedFields.includes('lecture')) {
-        query.populate('lecture verbose_name'); //here can be changed
+      if (wantedFields.includes('expert_of_lectures')) {
+        query.populate('expert_of_lectures', ['verbose_name']);
       }
     }
 
   }
   else {
-    query.populate('lecture', 'verbose_name');
-    query.populate('courses_of_study', 'verbose_name');
+    query.populate('expert_of_lectures', ['verbose_name']);
+    query.populate('courses_of_study', ['verbose_name']);
   }
 
   query.exec((err, user) => {
