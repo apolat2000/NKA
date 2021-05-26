@@ -8,50 +8,10 @@
 <script>
 import TutList from "../components/tutorial/list/TutList.vue";
 //import TutsSide from "../components/tutorial/TutsSide.vue";
-import axios from "axios";
+//import axios from "axios";
 
 export default {
   name: "TutorialsPage",
-  components: { TutList },
-  methods: {
-    logout() {
-      localStorage.clear();
-      this.$router.push("/login");
-      this.reloadNav();
-      console.log("Logged out");
-    },
-    reloadNav() {
-      this.$root.$refs.Navbar.reloadNav();
-    },
-  },
-  created() {
-    let jwtToken = localStorage.getItem("jwt_token");
-    if (jwtToken === null || jwtToken === "") {
-      this.logout();
-    }
-  },
-  async mounted() {
-    try {
-      const jwt_token = localStorage.getItem("jwt_token");
-      if (jwt_token) {
-        let result = await axios.post(
-          "http://localhost:3000/verifyRefreshToken",
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${jwt_token}`,
-            },
-          }
-        );
-        if (result.status === 200) {
-          localStorage.setItem("jwt_token", result.data.jwt_token);
-          console.log("refreshed token");
-        }
-      }
-    } catch (err) {
-      this.logout();
-      console.log(err.message);
-    }
-  },
+  components: { TutList }
 };
 </script>

@@ -10,8 +10,6 @@ exports.client_scope = (req, res) => {
   const tutId = req.params.id;
   let header = "";
 
-  console.log(userInToken);
-  console.log(tutId);
 
   if (tutId) {
     Tutorial.findOne({ _id: tutId }).exec((err, tut) => {
@@ -19,9 +17,9 @@ exports.client_scope = (req, res) => {
         res.send(err);
         return;
       }
-      console.log(tut);
-      if (tut.tutor === userInToken) {
-        console.log(res.headersSent) // false
+      console.log(typeof (tut.tutor));
+      console.log(typeof (userInToken));
+      if ("" + tut.tutor === userInToken) {
         header = 'tutor';
       }
       else if (tut.students.includes(userInToken)) {
@@ -30,7 +28,6 @@ exports.client_scope = (req, res) => {
       else {
         header = 'visitor';
       }
-      console.log(header);
       res.setHeader('Client_Scope', header);
       res.end();
     });
@@ -214,16 +211,69 @@ exports.read_a_tutorial = (req, res) => {
 exports.update_a_tutorial = (req, res) => {
   var userInToken = req.user.userID;
   let action = req.headers['action'];
-  Tutorial.findById(req.params.id, (err, tutorial) => {
+  console.log(action);
+  console.log(userInToken);
+
+  var query = Tutorial.findById(req.params.id);
+
+  query.exec((err, tutorial) => {
     if (err) {
       res.send(err);
-      return;
     }
     else if (!tutorial) {
       res.status(404).send();
-      return;
     }
-    else if (action === 'join') {
+    else {
+      switch (action) {
+        case "join":
+          Tutorial.findOneAndUpdate(
+            { _id: tutorial._id },
+            { $addToSet: { students: [userInToken] } },
+            { new: false },
+            (err) => {
+              if (err) res.send(err);
+            }
+          );
+          res.status(200).send();
+          break;
+        case "quit":
+          Tutorial.findOneAndUpdate(
+            { _id: tutorial._id },
+            { $pullAll: { students: [userInToken] } },
+            { new: false },
+            (err, tutorial) => {
+              if (err) res.send(err);
+              else if (tutorial.tutor != userInToken) res.status(401).send({ message: "Unauthorized access" });
+            }
+          );
+          res.status(200).send();
+          break;
+        default:
+          if (tutorial.tutor != userInToken) res.status(401).send({ message: "Unauthorized access" });
+          else {
+            Tutorial.findOneAndUpdate(
+              { _id: tutorial._id },
+              req.body,
+              { new: true },
+              (err, tutorial) => {
+                if (err) res.send(err);
+                res.json(tutorial);
+              }
+            );
+          }
+          break;
+      }
+    }
+  })
+
+  Tutorial.findById(req.params.id, (err, tutorial) => {
+    if (err) {
+      res.send(err);
+    }
+    else if (!tutorial) {
+      res.status(404).send();
+    }
+    else if (action === "join") {
       Tutorial.findOneAndUpdate(
         { _id: tutorial._id },
         { $addToSet: { students: [userInToken] } },
@@ -232,9 +282,9 @@ exports.update_a_tutorial = (req, res) => {
           if (err) res.send(err);
         }
       );
-      return;
+      res.status(200).send();
     }
-    else if (action === 'quit') {
+    else if (action === "quit") {
       Tutorial.findOneAndUpdate(
         { _id: tutorial._id },
         { $pullAll: { students: [userInToken] } },
@@ -244,11 +294,10 @@ exports.update_a_tutorial = (req, res) => {
           else if (tutorial.tutor != userInToken) res.status(401).send({ message: "Unauthorized access" });
         }
       );
-      return;
+      res.status(200).send();
     }
     else if (tutorial.tutor != userInToken) {
       res.status(401).send({ message: "Unauthorized access" })
-      return;
     }
     Tutorial.findOneAndUpdate(
       { _id: tutorial._id },
@@ -256,8 +305,7 @@ exports.update_a_tutorial = (req, res) => {
       { new: true },
       (err, tutorial) => {
         if (err) res.send(err);
-        else if (tutorial.tutor != userInToken) res.status(401).send({ message: "Unauthorized access" })
-        res.json(tutorial);
+        else if (tutorial.tutor != userInToken) res.status(401).send({ message: "Unauthorized access" });
       }
     );
   })
@@ -311,7 +359,6 @@ exports.search_tutorials = (req, res) => {
         return;
       }
       else {
-        console.log(tutorials);
         res.json(tutorials);
       }
     })

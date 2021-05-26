@@ -67,7 +67,7 @@ module.exports = (app, guard) => {  //Add guard to all get/post requests where t
 
   app
     .route('/user/:id/:fields*?')
-    .get(userController.read_a_user)
+    .get(guard, userController.read_a_user)
     .put(guard, uploadPp.single('img'), userController.update_a_user)
     .delete(userController.delete_a_user);
 

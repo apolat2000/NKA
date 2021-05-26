@@ -99,13 +99,15 @@
           </div>
         </i-nav>
       </i-sidebar>
-      <i-layout-content v-if="$route.params.page === 'join'">
+      <i-layout-content v-if="loaded && $route.params.page === 'join'">
         <i-button @click="joinOrQuit(true)" variant="primary">
           {{ tutorial.join_freely ? "Join tutorial" : "send join request" }}
         </i-button>
         <img src="../assets/resources.png" />
       </i-layout-content>
-      <i-layout-content v-else-if="loaded && (isStudent || isTutor)">
+      <i-layout-content
+        v-if="loaded && $route.params.page !== 'join' && (isStudent || isTutor)"
+      >
         <input
           type="file"
           single
@@ -170,7 +172,7 @@
           </template>
         </i-modal>
       </i-layout-content>
-      <i-layout-content v-else>
+      <i-layout-content v-if="!loaded">
         <h4>LOADING</h4>
       </i-layout-content>
     </i-layout>
@@ -211,22 +213,21 @@ export default {
     };
   },
   methods: {
-    logout() {
-      localStorage.clear();
-      this.$router.push("/login");
-      this.reloadNav();
-      console.log("Logged out");
+    getScope() {
+      return this.isTutor ? "tutor" : this.isStudent ? "student" : "global";
     },
-    joinOrQuit(join) {
-      let userId = localStorage.getItem("userID");
-      let userScope = this.getScope();
+    async joinOrQuit(join) {
+      const userId = localStorage.getItem("userID");
+      const userScope = this.getScope();
       if (userScope === "global") {
         if (join) {
+          //joining
           if (this.tutorial.join_freely) {
             if (!this.tutorial.students.includes(userId)) {
+              console.log("hey");
               try {
-                axios.put(
-                  `http://localhost:3000/tutorial/${this.tutorial._id}`,
+                let resJoin = await axios.put(
+                  `http://localhost:3000/tutorial/${this.$route.params.id}`,
                   {},
                   {
                     headers: {
@@ -237,22 +238,27 @@ export default {
                     },
                   }
                 );
-                this.isStudent = true;
-                this.$router.push({ params: { page: "summary" } });
+                console.log(resJoin);
+                if (resJoin.status === 200) {
+                  this.$router.push({ params: { page: "summary" } });
+                }
               } catch (err) {
                 window.alert("could not join");
                 console.log(err);
               }
             }
+          } else {
+            console.log("send notification to the tutor.");
           }
         }
       } else if (userScope === "student") {
         if (!join) {
           // quitting
-          if (this.tutorial.students.includes(userId)) {
+          if (this.tutorial.students.map((x) => x._id).includes(userId)) {
+            console.log(console.log("quitting"));
             try {
-              axios.put(
-                `http://localhost:3000/tutorial/${this.tutorial._id}`,
+              let resQuit = await axios.put(
+                `http://localhost:3000/tutorial/${this.$route.params.id}`,
                 {},
                 {
                   headers: {
@@ -263,19 +269,17 @@ export default {
                   },
                 }
               );
-              this.isStudent = false;
-              this.$router.push({ params: { page: "join" } });
+              if (resQuit.status === 200) {
+                this.$router.push({ params: { page: "join" } });
+              }
             } catch (err) {
-              window.alert("could not join");
+              window.alert("could not quit");
               console.log(err);
             }
           }
         }
       }
       this.$forceUpdate();
-    },
-    getScope() {
-      return this.isTutor ? "tutor" : this.isStudent ? "student" : "global";
     },
     parseDate: function (dte) {
       console.log(Date.parse(dte));
@@ -309,53 +313,41 @@ export default {
       }
     },
   },
-  created() {
-    //user is not authorized => Remain at login page
-    let jwtToken = localStorage.getItem("jwt_token");
-    if (jwtToken === null || jwtToken === "") {
-      this.logout();
-    }
-  },
   async mounted() {
     const jwt_token = localStorage.getItem("jwt_token");
-    try {
-      if (jwt_token) {
-        let result = await axios.post(
-          "http://localhost:3000/verifyRefreshToken",
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${jwt_token}`,
-            },
-          }
-        );
-        if (result.status === 200) {
-          localStorage.setItem("jwt_token", result.data.jwt_token);
-          console.log("refreshed token");
-        }
+
+    let resScope = await axios.head(
+      "http://localhost:3000/tutorial/" + this.$route.params.id,
+      {
+        headers: {
+          Authorization: `Bearer ${jwt_token}`,
+        },
       }
-    } catch (err) {
-      console.log(err.message);
-      this.logout();
-    }
+    );
+    const clientScope = resScope.headers.client_scope;
 
     if (this.$route.params.page !== "join") {
-      let resTut = await axios.head(
-        "http://localhost:3000/tutorial/" + this.$route.params.id,
+      switch (clientScope) {
+        case "visitor":
+          this.$router.push({ params: { page: "join" } });
+          break;
+        case "tutor":
+          console.log(this.isTutor);
+          this.isTutor = true;
+          break;
+        case "student":
+          this.isStudent = true;
+          break;
+      }
+
+      let resTut = await axios.get(
+        `http://localhost:3000/tutorial/${this.$route.params.id}`,
         {
           headers: {
             Authorization: `Bearer ${jwt_token}`,
           },
         }
       );
-
-      let clientScope = resTut.headers.client_scope;
-
-      if (clientScope === "visitor") {
-        this.$router.push({ params: { page: "join" } });
-      }
-
-      clientScope === "tutor" ? (this.isTutor = true) : (this.isStudent = true);
 
       this.tutorial = resTut.data;
 
@@ -399,22 +391,22 @@ export default {
 
       this.loaded = true;
     } else {
-      let resTut = await axios.head(
-        "http://localhost:3000/tutorial/" + this.$route.params.id,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt_token}`,
-          },
-        }
-      );
-
-      let clientScope = resTut.headers.client_scope;
-
-      if (clientScope !== "visitor") {
+      if (clientScope === "visitor") {
+        let resTut = await axios.get(
+          "http://localhost:3000/tutorial/" +
+            this.$route.params.id +
+            "/join_freely-students",
+          {
+            headers: {
+              Authorization: `Bearer ${jwt_token}`,
+            },
+          }
+        );
+        this.tutorial = resTut.data;
+        this.loaded = true;
+      } else {
         this.$router.push({ params: { page: "summary" } });
       }
-
-      this.tutorial = resTut.data;
     }
   },
 };
@@ -424,7 +416,5 @@ export default {
 .hamb {
   z-index: 1040;
   position: absolute;
-  /* left: 10px;
-  top: -40px; */
 }
 </style>

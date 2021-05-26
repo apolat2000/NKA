@@ -31,9 +31,13 @@ export default {
       corpus: "",
     };
   },
-  created() {
+  mounted() {
     axios
-      .get("http://localhost:3000/tutorials/is-no-query")
+      .get("http://localhost:3000/tutorials/is-no-query", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+        },
+      })
       .then((response) => {
         console.log(response.data[0]);
         this.tutorials = response.data;

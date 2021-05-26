@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Meta from 'vue-meta';
-
+import axios from 'axios';
 import Tutorials from './views/Tutorials.vue';
 import Home from './views/Home.vue';
 import NewTutorial from './views/NewTutorial.vue';
@@ -24,7 +24,7 @@ import Explore from './views/Explore.vue';
 Vue.use(Router);
 Vue.use(Meta);
 
-export default new Router({
+const router = new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   linkActiveClass: 'active',
@@ -131,3 +131,44 @@ export default new Router({
 
   ]
 });
+
+router.beforeEach(async function (to, from, next) {
+
+  console.log(to.name);
+
+  const goingTo = to.name;
+  let isAuthenticated = false;
+  let jwtToken = localStorage.getItem("jwt_token");
+
+  if (jwtToken !== null && jwtToken !== "") {
+    if (jwtToken) {
+      let result = await axios.post(
+        "http://localhost:3000/verifyRefreshToken",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        }
+      );
+      if (result.status === 200) {
+        localStorage.setItem("jwt_token", result.data.jwt_token);
+        isAuthenticated = true;
+      }
+      else if (result.status === 401) {
+        //this.$root.$refs.Navbar.reloadNav();
+      }
+    }
+  }
+
+  if (isAuthenticated && (goingTo === "login" || goingTo === "register" || goingTo === "forgot")) {
+    next(false);
+  } else if (!isAuthenticated && goingTo !== "login" && goingTo !== "register" && goingTo !== "forgot" && goingTo !== "home") {
+    //this.$root.$refs.Navbar.reloadNav();
+    next({ name: 'login' });
+  } else {
+    next();
+  }
+});
+
+export default router

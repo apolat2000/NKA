@@ -66,7 +66,7 @@
             @{{ tutor.username }}
           </h4>
           <div>
-            <router-link :to="`/users/${tutor._id}`">
+            <router-link :to="{ name: 'user-page', params:{id: tutor._id}}">
               <img
                 v-if="imgURI"
                 :src="imgURI"

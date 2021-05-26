@@ -301,46 +301,9 @@ export default {
       } else {
         console.log(result.status);
       }
-    },
-    logout() {
-      localStorage.clear();
-      this.$router.push("/login");
-      this.reloadNav();
-      console.log("Logged out");
-    },
-    reloadNav() {
-      this.$root.$refs.Navbar.reloadNav();
-    },
-  },
-  created() {
-    //user is not authorized => Remain at login page
-    let jwtToken = localStorage.getItem("jwt_token");
-    if (jwtToken === null || jwtToken === "") {
-      this.logout();
     }
   },
   async mounted() {
-    try {
-      let jwt_token = localStorage.getItem("jwt_token");
-      if (jwt_token) {
-        let result1 = await axios.post(
-          "http://localhost:3000/verifyRefreshToken",
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${jwt_token}`,
-            },
-          }
-        );
-        if (result1.status === 200) {
-          localStorage.setItem("jwt_token", result1.data.jwt_token);
-          console.log("refreshed token");
-        }
-      }
-    } catch (err) {
-      console.log(err);
-      this.logout();
-    }
     let result2 = await axios.get(
       "http://localhost:3000/user/" +
         localStorage.getItem("userID") +

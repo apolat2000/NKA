@@ -12,7 +12,7 @@
       <i-nav v-if="isLoggedIn()">
         <i-nav-item :to="{ name: 'explore-tutorials' }">Explore</i-nav-item>
         <i-nav-item :to="{ name: 'new-tutorial' }">Create</i-nav-item>
-        <i-nav-item :to="{ name: 'lectures' }">Socialize</i-nav-item>
+        <i-nav-item>Socialize</i-nav-item>
         <!-- <i-nav-item :to="{ name: 'earn-coins' }">Earn Coins</i-nav-item> -->
       </i-nav>
       <i-nav class="_margin-left-auto">
@@ -20,11 +20,10 @@
           <i-button variant="primary">{{ this.getName() }}</i-button>
           <i-dropdown-menu>
             <i-dropdown-item
-              :to="{ name: 'user-page', params: { id: getUserId()} }"
-              >
-              Your profile
-              </i-dropdown-item
+              :to="{ name: 'user-page', params: { id: getUserId() } }"
             >
+              Your profile
+            </i-dropdown-item>
             <i-dropdown-item href="">Settings</i-dropdown-item>
             <i-dropdown-item href="" disabled
               >Something disabled here</i-dropdown-item

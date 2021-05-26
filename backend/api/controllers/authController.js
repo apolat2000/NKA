@@ -41,7 +41,6 @@ exports.verifyRefreshToken = (req, res) => {
     if (token == null) return res.sendStatus(401) // if there isn't any token
     jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
         if (err) {
-            console.log(err);
             res.status(401).send({ status: 'Logged Out' });
         }
         else {

@@ -140,17 +140,6 @@ export default {
   methods: {
     now: function () {
       return new Date().toISOString();
-      // const date =
-      //   now.getDate() + "." + (now.getMonth() + 1) + "." + now.getFullYear();
-      // const time =
-      //   now.getHours() +
-      //   ":" +
-      //   (now.getMinutes() < 10 ? "0" : "") +
-      //   now.getMinutes();
-      // const dateTime = date + ", " + time + ".";
-      // console.log(time);
-      // console.log(dateTime);
-      // return dateTime;
     },
     checkForm: async function createTutorial() {
       if (!this.lecture) {

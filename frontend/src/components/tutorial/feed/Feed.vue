@@ -9,7 +9,7 @@
       <i-textarea v-model="comment_content" :placeholder="place_holder" />
       <div class="_display-flex _justify-items-center">
         <i-select
-          @input="place_holder = (typ === 'ask' ? '🤔' : '🤓')"
+          @input="place_holder = typ === 'ask' ? '🤔' : '🤓'"
           v-model="typ"
         >
           <i-select-option :value="'ask'" label="ask" />
@@ -20,7 +20,9 @@
           <i-select-option :value="'TUTOR'" label="to the tutor" />
           <i-select-option :value="'ALL'" label="to all" />
         </i-select>
-        <i-button><img style="height: 21px;" src="../../../assets/lightning.png" /></i-button>
+        <i-button
+          ><img style="height: 21px" src="../../../assets/lightning.png"
+        /></i-button>
       </div>
     </i-form>
     <div class="_margin-x-4" id="task-comments">
@@ -94,38 +96,16 @@ export default {
     },
     async grabComments() {
       try {
-        const jwt_token = localStorage.getItem("jwt_token");
-        console.log(jwt_token);
-        if (jwt_token) {
-          let result = await axios.post(
-            "http://localhost:3000/verifyRefreshToken",
-            {},
-            {
-              headers: {
-                Authorization: `Bearer ${jwt_token}`,
-              },
-            }
-          );
-          if (result.status === 200) {
-            localStorage.setItem("jwt_token", result.data.jwt_token);
-            result = await axios.get(
-              "http://localhost:3000/discussion/" + this.tutorialId,
-              {
-                headers: {
-                  Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
-                  Scope: this.scope,
-                },
-              }
-            );
-            this.comments = result.data;
+        let result = await axios.get(
+          "http://localhost:3000/discussion/" + this.tutorialId,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+              Scope: this.scope,
+            },
           }
-        } else {
-          console.log("You are not authorized to access this page");
-          localStorage.clear();
-          this.$router.push("/login");
-          this.$root.$refs.Navbar.reloadNav();
-          console.log("Logged out");
-        }
+        );
+        this.comments = result.data;
       } catch (err) {
         console.log(err.message);
         localStorage.clear();

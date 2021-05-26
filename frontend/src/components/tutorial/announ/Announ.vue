@@ -190,13 +190,26 @@ export default {
             }
           );
           if (res.status === 200) {
+            this.grabAnnouncements();
             this.corpus = "";
           }
         } catch (err) {
           alert("An error occured: ", err);
         }
-        return false;
       }
+    },
+    grabAnnouncements: async function () {
+      let resAnn = await axios.get(
+      "http://localhost:3000/announcement/" + this.tutorialId,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+          Page: "announcements",
+        },
+      }
+    );
+
+    this.announcements = resAnn.data;
     },
   },
   async mounted() {
