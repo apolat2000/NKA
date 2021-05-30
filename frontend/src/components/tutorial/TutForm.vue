@@ -25,7 +25,14 @@
         <form @submit.prevent="checkForm" method="POST">
           <i-form-group>
             <i-form-label>Lecture</i-form-label>
-            <i-select @input="$emit('getTitles', lecture); buttonValue = 'amk'" v-model="lecture" placeholder="Choose a lecture">
+            <i-select
+              @input="
+                $emit('getTitles', lecture);
+                buttonValue = 'amk';
+              "
+              v-model="lecture"
+              placeholder="Choose a lecture"
+            >
               <i-select-option
                 v-for="lec in lectures"
                 :key="lec.value"
@@ -37,7 +44,11 @@
 
           <i-form-group>
             <i-form-label>Title</i-form-label>
-            <i-input @input="$emit('updatedTitle', title);" v-model.trim="title" placeholder="A brief description." />
+            <i-input
+              @input="$emit('updatedTitle', title)"
+              v-model.trim="title"
+              placeholder="A brief description."
+            />
           </i-form-group>
 
           <i-form-group>
@@ -65,9 +76,9 @@
           <i-form-group>
             <i-form-label>Allow... </i-form-label>
             <i-radio-group v-model="joinFreely">
-            <i-radio :value="true">everyone to join.</i-radio>
-            <i-radio :value="false">after you accept join request.</i-radio>
-          </i-radio-group>
+              <i-radio :value="true">everyone to join.</i-radio>
+              <i-radio :value="false">after you accept join request.</i-radio>
+            </i-radio-group>
           </i-form-group>
 
           <i-form-group>
@@ -176,7 +187,11 @@ export default {
         };
         console.log(tut);
         axios
-          .post(`http://localhost:3000/tutorials/is-no-query`, tut)
+          .post(`http://localhost:3000/tutorials/is-no-query`, tut, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+            },
+          })
           .then((response) => {
             console.log(response.data);
             this.$router.push({
@@ -202,7 +217,10 @@ export default {
       .then((response) => {
         console.log(response.data);
         response.data.forEach((lecture) => {
-          this.lectures.push({ value: lecture._id, text: lecture.verbose_name });
+          this.lectures.push({
+            value: lecture._id,
+            text: lecture.verbose_name,
+          });
         });
       })
       .catch((e) => {

@@ -349,7 +349,7 @@ exports.search_tutorials = (req, res) => {
 
   if (!query) { next(); }
   else {
-    Tutorial.find({ $text: { $search: query } }).exec((err, tutorials) => {
+    Tutorial.find({ $text: { $search: query } }).populate('lecture', ['name']).populate('tutor', ['img_path', 'first_name', 'last_name', 'username']).exec((err, tutorials) => {
       if (err) {
         res.send(err);
         return;

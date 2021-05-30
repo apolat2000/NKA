@@ -14,7 +14,7 @@ exports.list_search_results = (req, res) => {
     const cos = req.params.cos;
 
     Promise.all([
-        Tutorial.find({ $text: { $search: query } }).select('class_size tutor students lecture title first_date frequency description join_freely'),
+        Tutorial.find({ $text: { $search: query } }).select('class_size tutor students lecture title first_date frequency description join_freely').populate('lecture', ['name']).populate('tutor', ['img_path', 'first_name', 'last_name', 'username']),
         User.find({ $text: { $search: query } }).select('courses_of_study tutor_in expert_of_lectures img_path first_name last_name username email'),
         Doc.find({ $text: { $search: query } }),
         C_o_S.find({ $text: { $search: query } }),
