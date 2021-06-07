@@ -72,7 +72,8 @@ exports.create_a_user = async (req, res) => {
           message: "User successufily registered!",
           jwt_token,
           userID: user._id,
-          first_name: user.first_name
+          first_name: user.first_name,
+          img_path: user.img_path
         })
       })
       .catch(error => {

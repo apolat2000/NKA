@@ -1,33 +1,45 @@
 <template>
   <i-container class="container _margin-x-0" fluid>
     <i-alert
+      @click="showToaster = false"
       v-if="showToaster"
-      style="position: absolute"
+      style="position: absolute; cursor: pointer"
       class="toaster"
       variant="success"
     >
-      <template slot="icon"><i-icon icon="success"></i-icon></template>
-      <p>Now searching in {{ currentCoS.verbose_name }}</p>
+      <p class="_text-center">
+        Now searching in <b>{{ currentCoS.verbose_name }}</b>
+      </p>
     </i-alert>
 
     <i-row top-xs class="_padding-1">
       <i-column xs="12">
-        <div class="_display-flex">
-          <h1 class="_font-weight-bold">Search in</h1>
-          <i-tooltip placement="bottom" trigger="hover">
-            <i-button
-              @click="showCoSModal(true)"
-              style="margin-left: 1ch"
-              class="_padding-0"
-              ><h1>{{ currentCoS.verbose_name }}</h1></i-button
-            >
-            <template slot="body">Click to change</template>
-          </i-tooltip>
-        </div>
         <div
           class="_border _border-color-gray-70 _rounded _padding-1 _padding-y-1"
         >
           <div class="_display-flex">
+            <h1 class="_font-weight-bold">Search in</h1>
+            <i-tooltip placement="bottom" trigger="hover">
+              <i-button
+                @click="showCoSModal(true)"
+                style="margin-left: 1ch"
+                class="_padding-0"
+                ><h1 class="_margin-bottom-0">{{ currentCoS.verbose_name }}</h1>
+                <div style="position: absolute; top: -10px; right: -10px">
+                  <pencil-icon />
+                </div>
+              </i-button>
+              <template slot="body">Click to change</template>
+            </i-tooltip>
+          </div>
+          <div class="_display-flex">
+            <i-button
+              @click="showFilters = !showFilters"
+              class="_margin-right-1"
+              style="height: 37px"
+            >
+              <filter-icon class="" />
+            </i-button>
             <i-input
               class="_width-100"
               v-model="queryText"
@@ -37,258 +49,174 @@
                 ><i-icon style="cursor: pointer" icon="search"
               /></i>
             </i-input>
-            <i-button @click="showFilters = !showFilters" class="_margin-left-1"
-              ><i-icon icon="dashboard"
-            /></i-button>
           </div>
           <div
             v-if="showFilters"
             class="_margin-top-1 _border _rounded _background-gray-20 _padding-1"
           >
-            <i-checkbox-group v-model="checked">
-              <i-checkbox value="filterTutorials">Tutorials</i-checkbox>
-              <i-checkbox value="filterLectures">Lectures</i-checkbox>
-              <i-checkbox value="filterPeople">People</i-checkbox>
-            </i-checkbox-group>
-          </div>
-          <div
-            v-if="showFilters"
-            class="_margin-top-1 _border _rounded _background-gray-20 _padding-1"
-          >
-            <i-checkbox-group v-model="checked">
-              <i-checkbox value="filterTutorials">Tutorials</i-checkbox>
-              <i-checkbox value="filterLectures">Lectures</i-checkbox>
-              <i-checkbox value="filterPeople">People</i-checkbox>
+            <i-checkbox-group v-model="checkedFilters">
+              <i-checkbox value="tutorials">Tutorials</i-checkbox>
+              <i-checkbox value="lectures">Lectures</i-checkbox>
+              <i-checkbox value="users">People</i-checkbox>
+              <i-checkbox value="coses">Courses of study</i-checkbox>
             </i-checkbox-group>
           </div>
           <i-loader v-if="searching" variant="dark" />
           <div
             class="_margin-top-1 _display-flex _justify-content-space-between _align-content-stretch"
           >
-            <i-card
-              v-for="(tut, index) in results.tuts"
-              :key="tut._id"
-              class="_flex-grow-1"
-              :class="index % 2 ? '_margin-left-1-2' : '_margin-right-1-2'"
-            >
-              <template slot="header">
-                <div
-                  class="_display-flex _justify-content-space-between _align-items-center"
+            <i-container>
+              <i-row
+                :between="true"
+                class="_flex-grow-1"
+                v-for="row in listSearchElements"
+                :key="row[0]._id"
+              >
+                <i-column
+                  class="_margin-y-1-2 _margin-x-0 _padding-x-0"
+                  v-for="e in row"
+                  :key="e._id"
+                  :xs="4"
                 >
-                  <div>
-                    <h5
-                      class="_margin-y-0 _a _text-truncate _font-weight-bold"
-                      style="max-width: 150px"
-                    >
-                      {{ tut.title }}
-                      <span style="color: green; font-size: 2rem"> • </span>
-                    </h5>
-                    <p class="_margin-0">{{ tut.lecture.name }}</p>
-                  </div>
-                  <img
-                    @click="
-                      $router.push({
-                        name: 'user-page',
-                        params: { id: tut.tutor._id },
-                      })
-                    "
-                    slot="image"
-                    src="../assets/defUser.png"
-                    alt="tutor"
-                    class="_rounded-circle"
-                    style="width: 35px; cursor: pointer"
-                  />
-                </div>
-              </template>
-              <p>
-                {{ tut.description }}
-              </p>
-              <template slot="footer">
-                <div
-                  class="_display-flex _justify-content-space-between _align-items-center"
-                >
-                  <div>
-                    <p class="_margin-0">Next meeting:</p>
-                    <p class="_margin-0">{{ niceDate(tut.first_date) }}</p>
-                  </div>
-                  <i-button
-                    outline
-                    variant="primary"
-                    circle
-                    style="width: 35px; height: 35px"
-                    ><i-icon icon="chevron-right"
-                  /></i-button>
-                </div>
-              </template>
-            </i-card>
-          </div>
-          <div class="_clearfix">
-            <i-button variant="primary" class="_float-right _margin-top-1"
-              >see all >></i-button
-            >
+                  <i-card v-if="e.class_size" class="_width-full _margin-x-0">
+                    <template slot="header">
+                      <div
+                        class="_display-flex _justify-content-space-between _align-items-center"
+                      >
+                        <div>
+                          <h5
+                            class="_margin-y-0 _a _text-truncate _font-weight-bold"
+                            style="max-width: 150px"
+                          >
+                            {{ e.title }}
+                            <span style="color: green; font-size: 2rem">
+                              •
+                            </span>
+                          </h5>
+                          <p class="_margin-0">{{ e.lecture.name }}</p>
+                        </div>
+                        <!-- <img
+                          @click="
+                            $router.push({
+                              name: 'user-page',
+                              params: { id: e.tutor._id },
+                            })
+                          "
+                          slot="image"
+                          src="../assets/defUser.png"
+                          alt="tutor"
+                          class="_rounded-circle"
+                          style="width: 35px; cursor: pointer"
+                        /> -->
+                        <p>
+                          {{ e.students.length }}/{{ e.class_size }}
+                          <span>
+                            <i class="users icon"></i>
+                          </span>
+                        </p>
+                      </div>
+                    </template>
+                    <p>
+                      {{ e.description }}
+                    </p>
+                    <template slot="footer">
+                      <div
+                        class="_display-flex _justify-content-space-between _align-items-center"
+                      >
+                        <div>
+                          <p class="_margin-0">Next meeting:</p>
+                          <p class="_margin-0">{{ niceDate(e.first_date) }}</p>
+                        </div>
+                        <div>
+                          <div v-if="isUserAStudentInTutorial(e.students)">
+                            <i-button
+                              :to="{
+                                name: 'tutorial-page',
+                                params: { id: e._id, page: 'summary' },
+                              }"
+                              outline
+                              variant="success"
+                              >Joined <i-icon icon="chevron-right" />
+                            </i-button>
+                          </div>
+                          <i-button :to="{
+                                name: 'tutorial-page',
+                                params: { id: e._id, page: 'join' },
+                              }" variant="success" v-else>Join</i-button>
+                        </div>
+                      </div>
+                    </template>
+                  </i-card>
+                  <i-card v-if="e.email">
+                    <template slot="header">
+                      <i-container>
+                        <i-row middle-xs>
+                          <i-column xs="4">
+                            <img
+                              :src="
+                                e.img_path === ''
+                                  ? 'http://localhost:3000/profilepics/defUser.png'
+                                  : e.img_path
+                              "
+                              alt="An error occured!"
+                              class="_border _rounded-circle"
+                              style="width: 60px"
+                            />
+                          </i-column>
+                          <i-column
+                            xs="8"
+                            class="_display-flex _flex-direction-column _justify-content-center"
+                          >
+                            <h5
+                              class="_text-center _margin-bottom-0 _font-weight-bold"
+                            >
+                              {{ e.first_name }} {{ e.last_name }}
+                            </h5>
+                            <h6 class="_text-center _margin-y-0">
+                              @{{ e.username }}
+                            </h6>
+                            <h6
+                              v-for="cos in e.courses_of_study"
+                              :key="cos._id"
+                              style="margin-top: 5px"
+                              class="_text-center"
+                            >
+                              {{ cos.verbose_name }}
+                            </h6>
+                          </i-column>
+                        </i-row>
+                      </i-container>
+                    </template>
+                    <i-list-group :bordered="false">
+                      <i-list-group-item>
+                        <p>{{ e.bio }}</p>
+                      </i-list-group-item>
+                      <i-list-group-item>
+                        <p>
+                          <b>Expert in:</b>
+                          {{ e.expert_of_lectures.verbose_name }}
+                        </p>
+                      </i-list-group-item>
+                    </i-list-group>
+                  </i-card>
+                </i-column>
+              </i-row>
+            </i-container>
           </div>
         </div>
       </i-column>
     </i-row>
-    <i-row v-if="false" top-xs class="_padding-1">
+    <i-row top-xs class="_padding-1">
       <i-column xs="12">
-        <h1 class="_font-weight-bold">Recommended tutorials</h1>
         <div
           class="_border _border-color-gray-70 _rounded _padding-1 _padding-y-1"
         >
-          <div
-            class="_display-flex _justify-content-space-between _align-content-stretch"
-          >
-            <i-card style="width: 320px" class="_margin-right-1">
-              <template slot="header">
-                <div
-                  class="_display-flex _justify-content-space-between _align-items-center"
-                >
-                  <div>
-                    <h5
-                      class="_margin-y-0 _a _text-truncate _font-weight-bold"
-                      style="max-width: 150px"
-                    >
-                      Tutorial's Title<span
-                        style="color: green; font-size: 2rem"
-                        >•</span
-                      >
-                    </h5>
-                    <p class="_margin-0">A.f.I.</p>
-                  </div>
-                  <img
-                    slot="image"
-                    src="../assets/defUser.png"
-                    alt="Card Image"
-                    style="width: 35px"
-                  />
-                </div>
-              </template>
-              If there is an announcement, last announcement. If not, if there
-              is feed, last feed. If not, if there is a document, the document.
-              If nothing, the description.
-              <template slot="footer">
-                <div
-                  class="_display-flex _justify-content-space-between _align-items-center"
-                >
-                  <div>
-                    <p class="_margin-0">Next meeting:</p>
-                    <p class="_margin-0">18/11/2000, 15:30.</p>
-                  </div>
-                  <i-button
-                    outline
-                    variant="primary"
-                    circle
-                    style="width: 35px; height: 35px"
-                  >
-                    <i-icon icon="chevron-right" />
-                  </i-button>
-                </div>
-              </template>
-            </i-card>
-            <i-card style="width: 320px" class="_margin-right-1">
-              <template slot="header">
-                <div
-                  class="_display-flex _justify-content-space-between _align-items-center"
-                >
-                  <div>
-                    <h5
-                      class="_margin-y-0 _a _text-truncate _font-weight-bold"
-                      style="max-width: 150px"
-                    >
-                      Tutorial's Title<span
-                        style="color: green; font-size: 2rem"
-                        >•</span
-                      >
-                    </h5>
-                    <p class="_margin-0">A.f.I.</p>
-                  </div>
-                  <img
-                    slot="image"
-                    src="../assets/defUser.png"
-                    alt="Card Image"
-                    style="width: 35px"
-                  />
-                </div>
-              </template>
-              If there is an announcement, last announcement. If not, if there
-              is feed, last feed. If not, if there is a document, the document.
-              If nothing, the description.
-              <template slot="footer">
-                <div
-                  class="_display-flex _justify-content-space-between _align-items-center"
-                >
-                  <div>
-                    <p class="_margin-0">Next meeting:</p>
-                    <p class="_margin-0">18/11/2000, 15:30.</p>
-                  </div>
-                  <i-button
-                    outline
-                    variant="primary"
-                    circle
-                    style="width: 35px; height: 35px"
-                    ><i-icon icon="chevron-right"
-                  /></i-button>
-                </div>
-              </template>
-            </i-card>
-            <i-card>
-              <template slot="header">
-                <div
-                  class="_display-flex _justify-content-space-between _align-items-center"
-                >
-                  <div>
-                    <h5
-                      class="_margin-y-0 _a _text-truncate _font-weight-bold"
-                      style="max-width: 150px"
-                    >
-                      Tutorial's Title<span
-                        style="color: green; font-size: 2rem"
-                        >•</span
-                      >
-                    </h5>
-                    <p class="_margin-0">A.f.I.</p>
-                  </div>
-                  <img
-                    slot="image"
-                    src="../assets/defUser.png"
-                    alt="Card Image"
-                    style="width: 35px"
-                  />
-                </div>
-              </template>
-              If there is an announcement, last announcement. If not, if there
-              is feed, last feed. If not, if there is a document, the document.
-              If nothing, the description.
-              <template slot="footer">
-                <div
-                  class="_display-flex _justify-content-space-between _align-items-center"
-                >
-                  <div>
-                    <p class="_margin-0">Next meeting:</p>
-                    <p class="_margin-0">18/11/2000, 15:30.</p>
-                  </div>
-                  <i-button
-                    outline
-                    variant="primary"
-                    circle
-                    style="width: 35px; height: 35px"
-                    ><i-icon icon="chevron-right"
-                  /></i-button>
-                </div>
-              </template>
-            </i-card>
-          </div>
-          <div class="_clearfix">
-            <i-button variant="primary" class="_float-right _margin-top-1"
-              >see all >></i-button
-            >
-          </div>
+          <h1 class="_font-weight-bold">Recommendations</h1>
         </div>
       </i-column>
     </i-row>
     <i-modal v-model="cosEdit">
-      <template slot="header">Find a course of study for searching</template>
+      <template slot="header">Find a course of study to search in</template>
       <i-form>
         <i-form-group class="_display-flex _justify-content-space-between">
           <!-- <i-button type="submit" variant="success">
@@ -344,17 +272,22 @@
 <script>
 import axios from "axios";
 import strsim from "string-similarity";
+import chunk from "chunk";
+
+import FilterIcon from "vue-material-design-icons/Filter.vue";
+import PencilIcon from "vue-material-design-icons/Pencil.vue";
 
 export default {
+  components: { FilterIcon, PencilIcon },
   data() {
     return {
       queryText: "",
       showFilters: false,
-      checked: ["filterTutorials", "filterLectures", "filterPeople"],
+      checkedFilters: ["tutorials", "lectures", "users", "coses"],
       results: {},
       queryLoaded: false,
       queryAllCoS: false,
-      currentCoS: "",
+      currentCoS: {},
       searching: false,
       cosEdit: false,
       queryTextCoS: "",
@@ -363,7 +296,18 @@ export default {
       showToaster: false,
     };
   },
+  computed: {
+    listSearchElements: function () {
+      console.log(this.results);
+      console.log(Object.values(this.results).flat());
+      console.log(chunk(Object.values(this.results).flat(), 3));
+      return chunk(Object.values(this.results).flat(), 3);
+    },
+  },
   methods: {
+    isUserAStudentInTutorial: function (students) {
+      return students.includes(localStorage.userID);
+    },
     changeCurrentCoS: function (cos) {
       this.currentCoS = cos;
       this.cosEdit = false;
@@ -376,7 +320,8 @@ export default {
     },
     computedSimilarityForCoSSearch: function () {
       const returned = this.allCoS.filter(
-        (c) => strsim.compareTwoStrings(this.queryTextCoS, c.verbose_name) > 0.2
+        (c) =>
+          strsim.compareTwoStrings(this.queryTextCoS, c.verbose_name) > 0.12
       );
 
       if (returned.length === 0) return [{ verbose_name: "No matches here." }];
@@ -415,11 +360,15 @@ export default {
     search() {
       this.searching = true;
       console.log("searching...");
+      console.log(this.checkedFilters.join("-"));
       axios
         .get(
           "http://localhost:3000/explore/search/" +
             this.queryText +
-            "/60a2ea2699da64be41a8676a",
+            "/" +
+            this.currentCoS._id +
+            "/" +
+            this.checkedFilters.join("-"),
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
@@ -436,7 +385,7 @@ export default {
         });
     },
     searchCoS(text) {
-      if (text.length >= 4) {
+      if (text.length >= 3) {
         this.showCoSDropdown = true;
       } else {
         this.showCoSDropdown = false;

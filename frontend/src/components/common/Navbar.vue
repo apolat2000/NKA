@@ -17,7 +17,11 @@
       </i-nav>
       <i-nav class="_margin-left-auto">
         <i-dropdown v-if="isLoggedIn()" placement="bottom-end">
-          <i-button variant="primary">{{ this.getName() }}</i-button>
+          <i-button variant="secondary" class="_display-flex _align-items-center">
+            <img :src="ppSource()" class="_rounded-circle" style="width:30px; height: 30px;" alt="profile picture">
+            <p class="_margin-y-0">&nbsp;&nbsp;{{ this.getName() }}</p>
+            <MenuDown class="_padding-y-0 _margin-y-0" />
+          </i-button>
           <i-dropdown-menu>
             <i-dropdown-item
               :to="{ name: 'user-page', params: { id: getUserId() } }"
@@ -56,13 +60,20 @@
 </template>
 
 <script>
+import MenuDown from "vue-material-design-icons/MenuDown.vue";
 export default {
+  components: {
+    MenuDown
+  },
   data() {
     return {
-      firstName: "",
+      firstName: ""
     };
   },
   methods: {
+    ppSource: function() {
+      return localStorage.img_path == "" ? "http://localhost:3000/profilepics/defUser.png" : "http://localhost:3000/"+localStorage.img_path ;
+    },
     logout() {
       localStorage.clear();
       this.$router.push("/login");

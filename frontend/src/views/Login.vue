@@ -1,9 +1,11 @@
 <template>
   <div
     id="login"
+    class="_margin-top-2"
   >
-    <div>
-      <h1 class="_text-center">Login</h1>
+    <div class="_display-flex _flex-direction-column _align-items-center">
+      <img src="../assets/lightning.png" width="50px;" alt="">
+      <h1 class="_text-center">Login to NKA</h1>
       <login-form />
     </div>
   </div>

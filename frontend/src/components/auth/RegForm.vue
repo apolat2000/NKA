@@ -54,9 +54,9 @@
             <i-select v-model="slctCoS" placeholder="Choose an option">
               <i-select-option
                 v-for="stud in studies"
-                :key="stud"
-                :value="stud"
-                :label="stud"
+                :key="stud._id"
+                :value="stud._id"
+                :label="stud.verbose_name"
               />
             </i-select>
           </i-form-group>
@@ -74,17 +74,17 @@
             />
           </i-form-group>
 
-          <i-form-group>
-            <i-form-label>Your experted lectures {{slctLec}}</i-form-label>
+          <!-- <i-form-group>
+            <i-form-label>Your experted lectures {{ slctLec }}</i-form-label>
             <i-select v-model="slctLec" placeholder="Choose an option">
               <i-select-option
                 v-for="lec in lectures"
-                :key="lec.value"
-                :value="lec.value"
-                :label="lec.text"
+                :key="lec._id"
+                :value="lec._id"
+                :label="lec.verbose_name"
               />
             </i-select>
-          </i-form-group>
+          </i-form-group> -->
 
           <i-form-group>
             <i-button variant="primary" type="submit">Register</i-button>
@@ -232,24 +232,38 @@ export default {
       slctCoS: "",
       lectures: [],
       image: "",
-      studies: [
-        "60a2ea2699da64be41a8676a"
-      ],
+      studies: [],
       alertMessage: "",
     };
   },
-  created() {
-    //user is not authorized => Remain at login page
-    if (localStorage.getItem("jwt_token") !== null) {
-      this.$router.push("/");
+  async mounted() {
+    let resCoS = await axios.get(
+      "http://localhost:3000/courses-of-study/is-no-query/verbose_name",
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+        },
+      }
+    );
+    if (resCoS.status === 200) {
+      this.studies = resCoS.data;
     } else {
-      axios.get("http://localhost:3000/lectures/is-no-query").then((res) => {
-        res.data.forEach((lec) =>
-          this.lectures.push({ value: lec._id, text: lec.verbose_name })
-        );
-        res.data.forEach((lec) => console.log(lec._id));
-      });
+      console.log(resCoS.status);
     }
+
+    // let resLec = await axios.get(
+    //   "http://localhost:3000/lectures/is-no-query/verbose_name",
+    //   {
+    //     headers: {
+    //       Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+    //     },
+    //   }
+    // );
+    // if (resLec.status === 200) {
+    //   this.lectures = resLec.data;
+    // } else {
+    //   console.log(resLec.status);
+    // }
   },
   methods: {
     now: function () {
@@ -289,7 +303,6 @@ export default {
         this.oblig = "Course of Study";
         this.showAlert = true;
       } else {
-        console.log(this.image);
         let user = {
           first_name: this.firstName,
           last_name: this.lastName,
@@ -297,7 +310,7 @@ export default {
           email: this.email,
           password: this.password,
           courses_of_study: [this.slctCoS],
-          expert_of_lectures: [this.slctLec],
+          // expert_of_lectures: [this.slctLec],
           img: this.image ? this.image : "",
           bio: "",
         };
@@ -313,6 +326,7 @@ export default {
           localStorage.setItem("jwt_token", newUser.data.jwt_token);
           localStorage.setItem("userID", newUser.data.userID);
           localStorage.setItem("firstName", newUser.data.first_name);
+          localStorage.setItem("img_path", newUser.data.img_path);
           this.$router.push("/");
           this.$root.$refs.Navbar.reloadNav();
         } catch (err) {
@@ -320,7 +334,7 @@ export default {
           console.log(err);
         }
       }
-    }
-  }
+    },
+  },
 };
 </script>

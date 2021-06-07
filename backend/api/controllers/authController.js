@@ -15,13 +15,15 @@ exports.login = async (req, res) => {
                     userID: user._id,
                     first_name: user.first_name,
                     last_name: user.last_name,
-                    email: user.email
+                    email: user.email,
+                    img_path: user.img_path
                 };
                 if (hashedPasswordInput === user.password) {
                     res.json({
                         message: "User logged in!",
                         jwt_token: jwt.sign(userDTO, process.env.TOKEN_SECRET, { expiresIn: '1800s' }),
                         userID: userDTO.userID,
+                        img_path: userDTO.img_path,
                         first_name: userDTO.first_name
                     });
                 } else {

@@ -26,22 +26,31 @@
       >
         <i-form method="POST">
           <i-form-group>
-            <i-form-label>Email</i-form-label>
-            <i-input v-model="email" type="email" />
+            <i-input placeholder="Email" v-model="email" type="email" />
           </i-form-group>
 
           <i-form-group>
-            <i-form-label>Password</i-form-label>
-            <i-input v-model="password" type="password" />
+            
+            <i-input placeholder="Password" v-model="password" type="password" />
+            <router-link class="_margin-y-1-4 _float-right" :to="{ name: 'forgot'}"><p style="width: 15ch">Forgot password?</p></router-link>
           </i-form-group>
-          <i-form-group class="_display-flex _justify-content-space-between">
-            <i-button variant="primary" @click="handleSubmit" type="submit">Login</i-button>
-            <i-button variant="primary"
-            :to="{ name: 'forgot'}"
-              >Forgot my password</i-button
-            >
+          <i-form-group>
+            <i-button class="_width-100" variant="primary" @click="handleSubmit" type="submit">Login</i-button>
           </i-form-group>
         </i-form>
+      </i-column>
+    </i-row>
+
+    <i-row>
+      <i-column
+        xl="4"
+        lg="6"
+        md="6"
+        sm="8"
+        xs="12"
+        class="_margin-x-auto _background-gray-20 _padding-1 _margin-top-1"
+      >
+        <p>New around here? <router-link :to="{name: 'register'}">Create an account.</router-link></p>
       </i-column>
     </i-row>
   </i-container>
@@ -81,9 +90,11 @@ export default {
           //if successfull
           if (res.status === 200) {
             console.log("Logged in");
+            console.log(res.data);
             localStorage.setItem("jwt_token", res.data.jwt_token);
             localStorage.setItem("userID", res.data.userID);
             localStorage.setItem("firstName", res.data.first_name);
+            localStorage.setItem("img_path", res.data.img_path);
             this.$router.push("/");
             this.$root.$refs.Navbar.reloadNav();
           }

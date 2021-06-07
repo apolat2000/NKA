@@ -226,6 +226,10 @@ exports.update_a_tutorial = (req, res) => {
     else {
       switch (action) {
         case "join":
+          if(
+            tutorial.class_size > tutorial.students.length
+          )
+          {
           Tutorial.findOneAndUpdate(
             { _id: tutorial._id },
             { $addToSet: { students: [userInToken] } },
@@ -235,6 +239,10 @@ exports.update_a_tutorial = (req, res) => {
             }
           );
           res.status(200).send();
+          }
+          else {
+            res.json({message: "Sorry, the tutorial is full."});
+          }
           break;
         case "quit":
           Tutorial.findOneAndUpdate(
@@ -243,7 +251,7 @@ exports.update_a_tutorial = (req, res) => {
             { new: false },
             (err, tutorial) => {
               if (err) res.send(err);
-              else if (tutorial.tutor != userInToken) res.status(401).send({ message: "Unauthorized access" });
+              //else if (tutorial.tutor != userInToken) res.status(401).send({ message: "Unauthorized access" });
             }
           );
           res.status(200).send();
@@ -266,49 +274,49 @@ exports.update_a_tutorial = (req, res) => {
     }
   })
 
-  Tutorial.findById(req.params.id, (err, tutorial) => {
-    if (err) {
-      res.send(err);
-    }
-    else if (!tutorial) {
-      res.status(404).send();
-    }
-    else if (action === "join") {
-      Tutorial.findOneAndUpdate(
-        { _id: tutorial._id },
-        { $addToSet: { students: [userInToken] } },
-        { new: false },
-        (err) => {
-          if (err) res.send(err);
-        }
-      );
-      res.status(200).send();
-    }
-    else if (action === "quit") {
-      Tutorial.findOneAndUpdate(
-        { _id: tutorial._id },
-        { $pullAll: { students: [userInToken] } },
-        { new: false },
-        (err, tutorial) => {
-          if (err) res.send(err);
-          else if (tutorial.tutor != userInToken) res.status(401).send({ message: "Unauthorized access" });
-        }
-      );
-      res.status(200).send();
-    }
-    else if (tutorial.tutor != userInToken) {
-      res.status(401).send({ message: "Unauthorized access" })
-    }
-    Tutorial.findOneAndUpdate(
-      { _id: tutorial._id },
-      req.body,
-      { new: true },
-      (err, tutorial) => {
-        if (err) res.send(err);
-        else if (tutorial.tutor != userInToken) res.status(401).send({ message: "Unauthorized access" });
-      }
-    );
-  })
+  // Tutorial.findById(req.params.id, (err, tutorial) => {
+  //   if (err) {
+  //     res.send(err);
+  //   }
+  //   else if (!tutorial) {
+  //     res.status(404).send();
+  //   }
+  //   else if (action === "join") {
+  //     Tutorial.findOneAndUpdate(
+  //       { _id: tutorial._id },
+  //       { $addToSet: { students: [userInToken] } },
+  //       { new: false },
+  //       (err) => {
+  //         if (err) res.send(err);
+  //       }
+  //     );
+  //     res.status(200).send();
+  //   }
+  //   else if (action === "quit") {
+  //     Tutorial.findOneAndUpdate(
+  //       { _id: tutorial._id },
+  //       { $pullAll: { students: [userInToken] } },
+  //       { new: false },
+  //       (err, tutorial) => {
+  //         if (err) res.send(err);
+  //         else if (tutorial.tutor != userInToken) res.status(401).send({ message: "Unauthorized access" });
+  //       }
+  //     );
+  //     res.status(200).send();
+  //   }
+  //   else if (tutorial.tutor != userInToken) {
+  //     res.status(401).send({ message: "Unauthorized access" })
+  //   }
+  //   Tutorial.findOneAndUpdate(
+  //     { _id: tutorial._id },
+  //     req.body,
+  //     { new: true },
+  //     (err, tutorial) => {
+  //       if (err) res.send(err);
+  //       else if (tutorial.tutor != userInToken) res.status(401).send({ message: "Unauthorized access" });
+  //     }
+  //   );
+  // })
 };
 
 exports.delete_a_tutorial = (req, res) => {

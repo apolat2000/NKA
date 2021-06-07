@@ -102,7 +102,7 @@ module.exports = (app, guard) => {  //Add guard to all get/post requests where t
 
   app
     .route('/courses-of-study/is-no-query/:fields*?')
-    .get(guard, courseOfStudyBulder.list_all_cos);
+    .get(courseOfStudyBulder.list_all_cos);
 
 
 
@@ -135,7 +135,7 @@ module.exports = (app, guard) => {  //Add guard to all get/post requests where t
     .get(lectureController.list_all_lectures);
 
   app
-    .route('/explore/search/:query/:cos')
+    .route('/explore/search/:query/:cos/:filters')
     .get(exploreController.list_search_results);
 
   // app

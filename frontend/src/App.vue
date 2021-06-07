@@ -2,7 +2,7 @@
   <div id="app">
     <i-layout>
       <i-layout-content class="_margin-bottom-1">
-        <navbar />
+        <navbar v-if="!($route.name === 'login' || $route.name === 'register')" /> 
         <router-view :key="$route.path" />
       </i-layout-content>
       <i-layout-footer class="_background-light">
@@ -13,6 +13,7 @@
                 class="_width-75"
                 src="https://upload.wikimedia.org/wikipedia/commons/1/1e/RWTH_Logo_3.svg"
               />
+              {{$route.name}}
             </i-column>
           </i-row>
         </i-container>
@@ -71,6 +72,9 @@ export default {
       this.$root.$refs.Navbar.reloadNav();
     },
   },
+  mounted() {
+    console.log(this.$route.name);
+  }
   // created() {
   //   let jwtToken = localStorage.getItem("jwt_token");
   //   if (jwtToken === null || jwtToken === "") {

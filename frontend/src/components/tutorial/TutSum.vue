@@ -1,94 +1,111 @@
 <template>
   <i-container fluid>
     <i-row top-xs class="_padding-1">
-      <i-column xs="12" sm="8" class="_margin-bottom-1">
-        <h4>Announcements</h4>
+      <i-column xs="12" sm="8" style="height: 100%">
         <div
-          style="padding-left: 2.5px; padding-right: 2.5px;"
-          class="_display-flex _justify-content-space-between"
+          style="height: 100%"
+          class="_border _border-color-gray-70 _background-gray-20 _rounded _padding-1 _margin-bottom-1"
         >
+          <h4>Announcements</h4>
           <div
-            style="margin-left: 2.5px; margin-right: 2.5px; margin-top: 5px; margin-bottom: 5px;"
-            class="_width-25"
-            v-for="ann in announcements"
-            :key="ann._id"
+            style="padding-left: 2.5px; padding-right: 2.5px"
+            class="_display-flex _justify-content-space-between"
           >
-            <i-card
-              :size="annSize(ann.importance)"
-              :variant="annVariant(ann.variant)"
+            <div
+              style="
+                margin-left: 2.5px;
+                margin-right: 2.5px;
+                margin-top: 5px;
+                margin-bottom: 5px;
+              "
+              class="_width-25"
+              v-for="ann in announcements"
+              :key="ann._id"
             >
-              <p>
-                {{ ann.corpus }}
-              </p>
-              <template slot="footer">
+              <i-card
+                :size="annSize(ann.importance)"
+                :variant="annVariant(ann.variant)"
+              >
                 <p>
-                  <i-icon
-                    :icon="
-                      ann.variant === 'WARNING'
-                        ? 'warning'
-                        : ann.variant === 'INFO'
-                        ? 'info'
-                        : ''
-                    "
-                  />
-                  {{ niceDate(ann.creation_date) }}
+                  {{ ann.corpus }}
                 </p>
-              </template>
-            </i-card>
+                <template slot="footer">
+                  <p>
+                    <i-icon
+                      :icon="
+                        ann.variant === 'WARNING'
+                          ? 'warning'
+                          : ann.variant === 'INFO'
+                          ? 'info'
+                          : ''
+                      "
+                    />
+                    {{ niceDate(ann.creation_date) }}
+                  </p>
+                </template>
+              </i-card>
+            </div>
           </div>
         </div>
       </i-column>
-      <i-column xs="6" sm="4">
-        <h4>Meeting</h4>
+      <i-column xs="6" sm="4" style="height: 100%">
         <div
-          class="_border _border-color-gray-70 _background-gray-20 _rounded _display-flex _flex-direction-column _align-items-center _padding-1"
+          style="height: 100%"
+          class="_border _border-color-gray-70 _background-gray-20 _rounded _padding-1"
         >
-          <p class="my-3 text-base md:text-lg lg:text-2xl font-semibold">
-            {{ niceDate(first_date_nr) }}
-          </p>
-          <div class="w-2/3 sm:w-1/3 my-3">
-            <i-button variant="secondary">Meet!</i-button>
+          <h4>Meeting</h4>
+          <div class="_display-flex _flex-direction-column _align-items-center">
+            <p class="my-3 text-base md:text-lg lg:text-2xl font-semibold">
+              {{ niceDate(first_date_nr) }}
+            </p>
+            <div class="w-2/3 sm:w-1/3 my-3">
+              <i-button variant="secondary">Meet!</i-button>
+            </div>
           </div>
         </div>
       </i-column>
       <i-column
         xs="6"
-        class="_display-xs-block _display-sm-none _display-md-none _display-lg-none _display-lg-none _display-xl-none"
+        class="_height-100 _display-xs-block _display-sm-none _display-md-none _display-lg-none _display-lg-none _display-xl-none"
       >
-        <h4>Tutor</h4>
         <div
-          class="_border _border-color-gray-70 _background-gray-20 _rounded _display-flex _flex-direction-column _align-items-center _padding-1"
+          class="_border _border-color-gray-70 _background-gray-20 _rounded _padding-1"
         >
-          <h3 class="_margin-bottom-0">
-            {{ tutor.first_name }} {{ tutor.last_name }}
-          </h3>
-          <h4 class="_margin-top-0 _margin-bottom-2 _text-gray-70">
-            @{{ tutor.username }}
-          </h4>
-          <div>
-            <router-link :to="{ name: 'user-page', params:{id: tutor._id}}">
-              <img
-                v-if="imgURI"
-                :src="imgURI"
-                width="100"
-                class="_rounded-circle"
-              />
-            </router-link>
+          <h4>Tutor</h4>
+          <div class="_display-flex _flex-direction-column _align-items-center">
+            <h3 class="_margin-bottom-0">
+              {{ tutor.first_name }} {{ tutor.last_name }}
+            </h3>
+            <h4 class="_margin-top-0 _margin-bottom-2 _text-gray-70">
+              @{{ tutor.username }}
+            </h4>
+            <div>
+              <router-link
+                :to="{ name: 'user-page', params: { id: tutor._id } }"
+              >
+                <img
+                  v-if="imgURI"
+                  :src="imgURI"
+                  width="100"
+                  class="_rounded-circle"
+                />
+              </router-link>
+            </div>
           </div>
         </div>
       </i-column>
     </i-row>
     <i-row top-xs class="_padding-1">
-      <i-column xs="12" sm="8">
-        <h4
-          style="cursor: pointer"
-          @click="$router.push({ params: { page: 'documents' } })"
-        >
-          Documents
-        </h4>
+      <i-column xs="12" sm="8" class="_height-100">
         <div
           class="_position-static _border _border-color-gray-70 _background-gray-20 _rounded _padding-1"
         >
+          <h4
+            style="cursor: pointer"
+            @click="$router.push({ params: { page: 'documents' } })"
+          >
+            Documents
+          </h4>
           <div class="_display-flex _flex-direction-row _align-items-stretch">
             <div
               @mouseenter="newDocHover = true"
@@ -122,37 +139,40 @@
           </div>
         </div>
       </i-column>
-      <i-column xs="4" class="_display-xs-none _display-sm-block">
-        <h4>Tutor</h4>
+      <i-column xs="4" class="_display-xs-none _display-sm-block _height-100">
         <div
-          class="_border _border-color-gray-70 _background-gray-20 _rounded _display-flex _flex-direction-column _align-items-center _padding-1"
+          class="_border _border-color-gray-70 _background-gray-20 _rounded _padding-1"
         >
-          <h3 class="_margin-bottom-0">
-            {{ tutor.first_name }} {{ tutor.last_name }}
-          </h3>
-          <h4 class="_margin-top-0 _margin-bottom-2 _text-gray-70">
-            @{{ tutor.username }}
-          </h4>
-          <div>
-            <router-link :to="`/users/${tutor._id}`">
-              <img
-                v-if="imgURI"
-                :src="imgURI"
-                width="100"
-                class="_rounded-circle"
-              />
-            </router-link>
+          <h4>Tutor</h4>
+          <div class="_display-flex _flex-direction-column _align-items-center">
+            <h3 class="_margin-bottom-0">
+              {{ tutor.first_name }} {{ tutor.last_name }}
+            </h3>
+            <h4 class="_margin-top-0 _margin-bottom-2 _text-gray-70">
+              @{{ tutor.username }}
+            </h4>
+            <div>
+              <router-link :to="`/users/${tutor._id}`">
+                <img
+                  v-if="imgURI"
+                  :src="imgURI"
+                  width="100"
+                  class="_rounded-circle"
+                />
+              </router-link>
+            </div>
           </div>
         </div>
       </i-column>
     </i-row>
     <i-row top-xs class="_padding-1">
-      <i-column xs="12">
-        <h4>Description</h4>
+      <i-column xs="12" class="_height-100">
         <div
           class="_border _border-color-gray-70 _background-gray-20 _rounded _padding-1"
         >
-          {{ putDotAtEnd(description || "") }}
+          <h4>Description</h4>
+
+          <p>{{ putDotAtEnd(description || "") }}</p>
         </div>
       </i-column>
     </i-row>
