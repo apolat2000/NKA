@@ -17,8 +17,7 @@ exports.client_scope = (req, res) => {
         res.send(err);
         return;
       }
-      console.log(typeof (tut.tutor));
-      console.log(typeof (userInToken));
+
       if ("" + tut.tutor === userInToken) {
         header = 'tutor';
       }
@@ -226,22 +225,21 @@ exports.update_a_tutorial = (req, res) => {
     else {
       switch (action) {
         case "join":
-          if(
+          if (
             tutorial.class_size > tutorial.students.length
-          )
-          {
-          Tutorial.findOneAndUpdate(
-            { _id: tutorial._id },
-            { $addToSet: { students: [userInToken] } },
-            { new: false },
-            (err) => {
-              if (err) res.send(err);
-            }
-          );
-          res.status(200).send();
+          ) {
+            Tutorial.findOneAndUpdate(
+              { _id: tutorial._id },
+              { $addToSet: { students: [userInToken] } },
+              { new: false },
+              (err) => {
+                if (err) res.send(err);
+              }
+            );
+            res.status(200).send();
           }
           else {
-            res.json({message: "Sorry, the tutorial is full."});
+            res.json({ message: "Sorry, the tutorial is full." });
           }
           break;
         case "quit":

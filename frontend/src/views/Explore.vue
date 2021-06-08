@@ -52,7 +52,13 @@
           </div>
           <div
             v-if="showFilters"
-            class="_margin-top-1 _border _rounded _background-gray-20 _padding-1"
+            class="
+              _margin-top-1
+              _border
+              _rounded
+              _background-gray-20
+              _padding-1
+            "
           >
             <i-checkbox-group v-model="checkedFilters">
               <i-checkbox value="tutorials">Tutorials</i-checkbox>
@@ -63,12 +69,13 @@
           </div>
           <i-loader v-if="searching" variant="dark" />
           <div
-            class="_margin-top-1 _display-flex _justify-content-space-between _align-content-stretch"
+            class="
+              _margin-top-1 _width-100
+            "
           >
             <i-container>
               <i-row
                 :between="true"
-                class="_flex-grow-1"
                 v-for="row in listSearchElements"
                 :key="row[0]._id"
               >
@@ -81,11 +88,20 @@
                   <i-card v-if="e.class_size" class="_width-full _margin-x-0">
                     <template slot="header">
                       <div
-                        class="_display-flex _justify-content-space-between _align-items-center"
+                        class="
+                          _display-flex
+                          _justify-content-space-between
+                          _align-items-center
+                        "
                       >
                         <div>
                           <h5
-                            class="_margin-y-0 _a _text-truncate _font-weight-bold"
+                            class="
+                              _margin-y-0
+                              _a
+                              _text-truncate
+                              _font-weight-bold
+                            "
                             style="max-width: 150px"
                           >
                             {{ e.title }}
@@ -121,7 +137,11 @@
                     </p>
                     <template slot="footer">
                       <div
-                        class="_display-flex _justify-content-space-between _align-items-center"
+                        class="
+                          _display-flex
+                          _justify-content-space-between
+                          _align-items-center
+                        "
                       >
                         <div>
                           <p class="_margin-0">Next meeting:</p>
@@ -139,10 +159,25 @@
                               >Joined <i-icon icon="chevron-right" />
                             </i-button>
                           </div>
-                          <i-button :to="{
-                                name: 'tutorial-page',
-                                params: { id: e._id, page: 'join' },
-                              }" variant="success" v-else>Join</i-button>
+                          <i-button
+                            :to="{
+                              name: 'tutorial-page',
+                              params: { id: e._id, page: 'join' },
+                            }"
+                            variant="success"
+                            v-else-if="e.class_size > e.students.length"
+                            >Join</i-button
+                          >
+                          <i-button
+                            v-else
+                            variant="danger"
+                            :to="{
+                              name: 'tutorial-page',
+                              params: { id: e._id, page: 'join' },
+                            }"
+                          >
+                            Tutorial full
+                          </i-button>
                         </div>
                       </div>
                     </template>
@@ -165,10 +200,18 @@
                           </i-column>
                           <i-column
                             xs="8"
-                            class="_display-flex _flex-direction-column _justify-content-center"
+                            class="
+                              _display-flex
+                              _flex-direction-column
+                              _justify-content-center
+                            "
                           >
                             <h5
-                              class="_text-center _margin-bottom-0 _font-weight-bold"
+                              class="
+                                _text-center
+                                _margin-bottom-0
+                                _font-weight-bold
+                              "
                             >
                               {{ e.first_name }} {{ e.last_name }}
                             </h5>

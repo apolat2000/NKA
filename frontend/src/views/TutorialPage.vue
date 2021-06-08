@@ -100,8 +100,11 @@
         </i-nav>
       </i-sidebar>
       <i-layout-content v-if="loaded && $route.params.page === 'join'">
-        <i-button @click="joinOrQuit(true)" variant="primary">
+        <i-button v-if="tutorial.class_size > tutorial.students.length" @click="joinOrQuit(true)" variant="primary">
           {{ tutorial.join_freely ? "Join tutorial" : "send join request" }}
+        </i-button>
+        <i-button disabled v-else variant="danger">
+          Tutorial full
         </i-button>
         <img src="../assets/resources.png" />
       </i-layout-content>
@@ -119,7 +122,7 @@
           @change="docAction($event)"
         />
         <tut-sum
-          v-if="this.$route.params.page === 'summary' && this.tutorial.tutor"
+          v-if="$route.params.page === 'summary' && tutorial.tutor"
           :students="tutorial.students"
           :class_size="tutorial.class_size"
           :tutor="tutorial.tutor"
@@ -395,7 +398,7 @@ export default {
         let resTut = await axios.get(
           "http://localhost:3000/tutorial/" +
             this.$route.params.id +
-            "/join_freely-students",
+            "/join_freely-students-class_size",
           {
             headers: {
               Authorization: `Bearer ${jwt_token}`,
