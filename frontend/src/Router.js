@@ -132,6 +132,28 @@ const router = new Router({
   ]
 });
 
+router.afterEach((to) => {
+  let jwtToken = localStorage.getItem("jwt_token");
+
+  var whichStatistic;
+
+  if ( to.name === "tutorial-page") {
+    whichStatistic = "tutorial";
+  }
+  else if ( to.name === "user-page") {
+    whichStatistic = "user";
+  }
+  if (whichStatistic) {
+    axios.put(`http://localhost:3000/statistics/visit/${whichStatistic}/${to.params.id}`, {}, {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`
+      },
+    })
+  }
+  
+
+})
+
 router.beforeEach(async function (to, from, next) {
 
   console.log(to.name);
@@ -140,7 +162,7 @@ router.beforeEach(async function (to, from, next) {
   let isAuthenticated = false;
   let jwtToken = localStorage.getItem("jwt_token");
 
-  if (jwtToken !== null && jwtToken !== "") {
+  if (jwtToken !== null && jwtToken !== undefined && jwtToken !== "") {
     if (jwtToken) {
       let result = await axios.post(
         "http://localhost:3000/verifyRefreshToken",

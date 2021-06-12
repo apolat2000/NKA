@@ -22,7 +22,7 @@ exports.list_search_results = (req, res) => {
         var wantedFields = req.params.filters.split('-');
     }
 
-    console.log(wantedFields);
+    //console.log(wantedFields);
     var promisedArray = [];
 
     if (wantedFields.includes("tutorials")) {
@@ -49,7 +49,7 @@ exports.list_search_results = (req, res) => {
     Promise.all(promisedArray)
         .then(results => {
 
-            console.log(results);
+            //console.log(results);
             var [tuts, usrs, coses, lecs] = results;
 
             if (cos === "all") {
@@ -78,7 +78,7 @@ exports.list_search_results = (req, res) => {
                 lecs: lecs
             }
 
-            console.log(resObj);
+            //console.log(resObj);
 
             res.json(resObj);
 

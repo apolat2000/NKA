@@ -8,7 +8,6 @@ const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@
 const tutorialsSchema = new Schema(
   {
     class_size: { type: Number, min: 1, max: 15 },
-
     tutor: { type: Schema.Types.ObjectId, ref: "Users" }, //foreign key
     students: [
       { type: Schema.Types.ObjectId, ref: "Users" }, //foreign keys
@@ -73,7 +72,7 @@ const docsSchema = new Schema({
   title: String,
   description: String,
   tut: { type: Schema.Types.ObjectId, ref: 'Tutorials' }, //foreign keys -- redundant because tutorID is saved in tutorial.tutor
-  created_by: { type: Schema.Types.ObjectId, ref: "Users" }, //foreign key
+  created_by: { type: Schema.Types.ObjectId, ref: 'Users' }, //foreign key
   visibility: {
     type: String,
     enum: ['TUTOR', 'CLASS', 'ALL']
@@ -137,11 +136,39 @@ const announcementsSchema = new Schema({
   },
   importance: { //1 === 'KINDA, 2 === 'IMPORTANT', 3 === 'REALLY'
     type: Number,
-    enum: [1,2,3]
+    enum: [1, 2, 3]
   },
   tutorialId: { type: Schema.Types.ObjectId, ref: "Tutorials" } //foreign key
 },
   { collection: "Announcements" }
+);
+
+const correlationsSchema = new Schema({
+  user: { type: Schema.Types.ObjectId, ref: "Users" },
+  correlations: [{ cor: Number, with: { type: Schema.Types.ObjectId, ref: "Users" } }],
+  max_pos_correlation: { cor: Number, with: { type: Schema.Types.ObjectId, ref: "Users" } },
+  max_neg_correlation: { cor: Number, with: { type: Schema.Types.ObjectId, ref: "Users" } }
+},
+  { collection: "Correlations" }
+);
+
+const visitedTutorialsSubSchema = mongoose.Schema({
+  tut: { type: Schema.Types.ObjectId, ref: 'Tutorials' },
+  when: { type: Date, default: Date.now }
+}, { _id: false });
+
+const visitedUsersSubSchema = mongoose.Schema({
+  usr: { type: Schema.Types.ObjectId, ref: 'Users' },
+  when: { type: Date, default: Date.now }
+}, { _id: false });
+
+const userStatisticsSchema = new Schema(
+  {
+    user: { type: Schema.Types.ObjectId, ref: 'Users' },
+    visited_tutorials: [visitedTutorialsSubSchema],
+    visited_users: [visitedUsersSubSchema]
+  },
+  { collection: "UserStatistics" }
 );
 
 const Users = mongoose.model('Users', usersSchema);
@@ -152,6 +179,9 @@ const Docs = mongoose.model('Docs', docsSchema);
 const Announcements = mongoose.model('Announcements', announcementsSchema);
 const CoursesOfStudy = mongoose.model('CoursesOfStudy', courseOfStudySchema);
 
+const Correlations = mongoose.model('Correlations', correlationsSchema);
+const UserStatistics = mongoose.model('UserStatistics', userStatisticsSchema);
+
 module.exports = {
-  Users, Tutorials, Lectures, Discussions, Docs, Announcements, CoursesOfStudy
+  Users, Tutorials, Lectures, Discussions, Docs, Announcements, CoursesOfStudy, Correlations, UserStatistics
 };

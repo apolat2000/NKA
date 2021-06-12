@@ -8,6 +8,7 @@ const docController = require('../controllers/docController')
 const announcementController = require('../controllers/announcementController');
 const courseOfStudyBulder = require('../controllers/courseOfStudyController');
 const exploreController = require('../controllers/exploreController');
+const statisticsController = require('../controllers/statisticsController');
 
 const multer = require('multer');
 
@@ -81,8 +82,6 @@ module.exports = (app, guard) => {  //Add guard to all get/post requests where t
     .get(userController.search_users);
 
 
-
-
   app
     .route('/tutorial/:id/:fields*?')
     .get(guard, tutorialController.read_a_tutorial)
@@ -141,6 +140,10 @@ module.exports = (app, guard) => {  //Add guard to all get/post requests where t
   // app
   //   .route('/explore/recommendations')
   //   .get(exploreController.recommend);
+
+  app
+    .route('/statistics/visit/:what/:id')
+    .put(guard, statisticsController.visit_update)
 
   app
     .route('/lecture/:lectureId')
