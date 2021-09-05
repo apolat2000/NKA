@@ -11,7 +11,7 @@
     "@fortawesome/fontawesome-free": "^5.15.2",
     "@inkline/inkline": "^2.0.0",
     "@mycure/vue-jitsi-meet": "^0.0.7",
-    "axios": "^0.21.1",
+    "axios": "^0.21.3",
     "chunk": "^0.0.3",
     "core-js": "^3.6.5",
     "jsonwebtoken": "^8.5.1",
